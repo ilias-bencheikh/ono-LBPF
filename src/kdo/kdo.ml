@@ -9,6 +9,7 @@ end
 
 module Concrete = struct
   module I32 = Owi.Concrete_i32
+  module I64 = Owi.Concrete_i64
   module Extern_func = Owi.Concrete_extern_func
 end
 
