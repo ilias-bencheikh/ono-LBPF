@@ -46,6 +46,13 @@ let log_level =
   let env = Cmd.Env.info "ONO_VERBOSITY" in
   Logs_cli.level ~env ~docs:sdocs ()
 
+let seed =
+  let doc =
+    "Random seed. If provided, uses a deterministic RNG via $(b,Random.init). If \
+     absent, uses $(b,Random.self_init) for nondeterministic seeding."
+  in
+  Arg.(value & opt (some int) None & info [ "seed" ] ~docs:sdocs ~docv:"N" ~doc)
+
 (* Arguments helpers. *)
 
 let existing_file_conv =
@@ -61,7 +68,9 @@ let existing_file_conv =
 let setup_log =
   let open Term.Syntax in
   let+ log_level = log_level
-  and+ style_renderer = Fmt_cli.style_renderer ~docs:sdocs () in
+  and+ style_renderer = Fmt_cli.style_renderer ~docs:sdocs ()
+  and+ seed = seed in
+  (match seed with Some n -> Random.init n | None -> Random.self_init ());
   Fmt_tty.setup_std_outputs ?style_renderer ();
   Logs.set_level log_level;
   Logs.Src.set_level Owi.Log.main_src (Some Logs.Warning);
