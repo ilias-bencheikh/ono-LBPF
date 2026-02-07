@@ -4,11 +4,16 @@ Test the output of the man page:
          ono-concrete
   
   SYNOPSIS
-         ono concrete [OPTION]… FILE
+         ono concrete [--seed=INT] [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
              Source file to analyze.
+  
+  OPTIONS
+         --seed=INT
+             Sets the seed for the random number generator. If omitted, a
+             non-deterministic seed is used.
   
   COMMON OPTIONS
          --color=WHEN (absent=auto)
