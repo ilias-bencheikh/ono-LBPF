@@ -41,20 +41,21 @@ let clear_screen (_ : unit) : (unit, _) Result.t =
   Buffer.clear display_buffer;
   Ok ()
 
-
 let m =
   let open Kdo.Concrete.Extern_func in
   let open Kdo.Concrete.Extern_func.Syntax in
   let functions =
-    [ ("print_i32", Extern_func (i32 ^->. unit, print_i32))
-    ; ("print_i64", Extern_func (i64 ^->. unit, print_i64))
-    ; ("random_i32", Extern_func (unit ^->. i32, random_i32))
-    ; ("sleep", Extern_func (i32 ^->. unit, sleep))
-    ; ("print_cell", Extern_func (i32 ^->. unit, print_cell))
-    ; ("newline", Extern_func (unit ^->. unit, newline))
-    ; ("clear_screen", Extern_func (unit ^->. unit, clear_screen))
+    [
+      ("print_i32", Extern_func (i32 ^->. unit, print_i32));
+      ("print_i64", Extern_func (i64 ^->. unit, print_i64));
+      ("random_i32", Extern_func (unit ^->. i32, random_i32));
+      ("sleep", Extern_func (i32 ^->. unit, sleep));
+      ("print_cell", Extern_func (i32 ^->. unit, print_cell));
+      ("newline", Extern_func (unit ^->. unit, newline));
+      ("clear_screen", Extern_func (unit ^->. unit, clear_screen));
     ]
   in
-  { Kdo.Extern.Module.functions
-  ; func_type = Kdo.Concrete.Extern_func.extern_type
+  {
+    Kdo.Extern.Module.functions;
+    func_type = Kdo.Concrete.Extern_func.extern_type;
   }
