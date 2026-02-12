@@ -1,11 +1,9 @@
 (module
-  (include "memory.wat")
-  (include "logic.wat")
-  (include "init.wat")
-  (include "display.wat")
+
   (import "ono" "sleep" (func $sleep (param f32)))
   (import "env" "print_grid" (func $print_grid))
   (import "env" "step" (func $step))
+  (import "env" "init_grid" (func $init_grid))
 
   (func $loop
     (call $print_grid)
