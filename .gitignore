@@ -3,3 +3,4 @@ _build
 run.sh
 _coverage
 _opam
+*.sh

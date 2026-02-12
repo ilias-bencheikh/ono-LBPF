@@ -17,9 +17,9 @@ let random_i32 (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
 
 (* Fonctions externes *)
 
-let sleep (milliseconds : Kdo.Concrete.I32.t) : (unit, _) Result.t =
-  let ms = Kdo.Concrete.I32.to_int milliseconds in
-  let seconds = Float.of_int ms /. 1000.0 in
+let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
+  let ms = Kdo.Concrete.F32.to_float milliseconds in
+  let seconds = ms /. 1000.0 in
   Unix.sleepf seconds;
   Ok ()
 
@@ -45,14 +45,13 @@ let m =
   let open Kdo.Concrete.Extern_func in
   let open Kdo.Concrete.Extern_func.Syntax in
   let functions =
-    [
-      ("print_i32", Extern_func (i32 ^->. unit, print_i32));
-      ("print_i64", Extern_func (i64 ^->. unit, print_i64));
-      ("random_i32", Extern_func (unit ^->. i32, random_i32));
-      ("sleep", Extern_func (i32 ^->. unit, sleep));
-      ("print_cell", Extern_func (i32 ^->. unit, print_cell));
-      ("newline", Extern_func (unit ^->. unit, newline));
-      ("clear_screen", Extern_func (unit ^->. unit, clear_screen));
+    [ ("print_i32", Extern_func (i32 ^->. unit, print_i32))
+    ; ("print_i64", Extern_func (i64 ^->. unit, print_i64))
+    ; ("random_i32", Extern_func (unit ^->. i32, random_i32))
+    ; ("sleep", Extern_func (f32 ^->. unit, sleep))
+    ; ("print_cell", Extern_func (i32 ^->. unit, print_cell))
+    ; ("newline", Extern_func (unit ^->. unit, newline))
+    ; ("clear_screen", Extern_func (unit ^->. unit, clear_screen))
     ]
   in
   {
