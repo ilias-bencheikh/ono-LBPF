@@ -41,7 +41,6 @@ let clear_screen (_ : unit) : (unit, _) Result.t =
   Buffer.clear display_buffer;
   Ok ()
 
-
 let m =
   let open Kdo.Concrete.Extern_func in
   let open Kdo.Concrete.Extern_func.Syntax in
@@ -55,6 +54,7 @@ let m =
     ; ("clear_screen", Extern_func (unit ^->. unit, clear_screen))
     ]
   in
-  { Kdo.Extern.Module.functions
-  ; func_type = Kdo.Concrete.Extern_func.extern_type
+  {
+    Kdo.Extern.Module.functions;
+    func_type = Kdo.Concrete.Extern_func.extern_type;
   }

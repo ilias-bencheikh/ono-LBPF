@@ -1,0 +1,11 @@
+repos:
+-   repo: local
+    hooks:
+    -   id: ocaml-format
+        name: OCaml Format
+        # La commande standard pour formater avec Dune
+        entry: dune build @fmt --auto-promote
+        language: system
+        # Ne s'exécute que sur les fichiers .ml et .mli
+        files: \.(ml|mli)$
+        pass_filenames: false

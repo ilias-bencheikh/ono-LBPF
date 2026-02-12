@@ -1,5 +1,6 @@
 _build
 *.coverage
+run.sh
 _coverage
 _opam
 *.sh
