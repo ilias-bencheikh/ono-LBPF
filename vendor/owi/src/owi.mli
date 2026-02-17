@@ -839,6 +839,10 @@ module Concrete_extern_func : sig
 
     val i64 : (lr, elt, Concrete_i64.t) t
 
+    val f32 : (lr, elt, Concrete_f32.t) t
+
+    val f64 : (lr, elt, Concrete_f64.t) t
+
     val unit : (lr, unit, unit) t
 
     val memory : int -> (l, mem, Concrete_memory.t) t
