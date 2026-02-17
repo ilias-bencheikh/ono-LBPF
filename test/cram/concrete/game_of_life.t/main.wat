@@ -4,6 +4,7 @@
   (import "ono" "print_cell" (func $print_cell (param i32)))
   (import "ono" "newline" (func $newline))
   (import "ono" "clear_screen" (func $clear_screen))
+  (import "ono" "random_i32" (func $random_i32 (result i32)))
 
   ;; initialisation de la grille
 
@@ -13,16 +14,39 @@
   (memory $mem 1) 
 
   (func $coords_to_index (param $i i32) (param $j i32) (result i32)
-  ;; Convertit (i,j) en index 1D
+    ;; Convertit (i,j) en index 1D
+    ;; return i * grid_width + j
+    (i32.add
+      (i32.mul (local.get $i) (global.get $grid_width))
+      (local.get $j)
+    )
   )
 
   (func $index_to_coords (param $index i32) (result i32 i32)
-  ;; Convertit index 1D en (i,j)
-
+    ;; Convertit index 1D en (i,j)
+    ;; return (index / grid_width, index % grid_width)
+    (i32.div_u (local.get $index) (global.get $grid_width))
+    (i32.rem_u (local.get $index) (global.get $grid_width))
   )
 
   (func $init_grid
     ;; Initialise la grille (aléatoire ou depuis config)
+    (local $i i32)
+    (local $j i32)
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j
+        (i32.store 
+          (call $coords_to_index (local.get $i) (local.get $j))
+          (i32.and (call $random_i32) (i32.const 1)) ;; 0 ou 1 aléatoire
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
   )
 
   (func $load_config (param $config_ptr i32)
@@ -33,14 +57,18 @@
 
    (func $is_alive (param $i i32) (param $j i32) (result i32)
     ;; Vérifie si une cellule est vivante
+    ;; return 1 si vivant, 0 sinon
+    (i32.load (call $coords_to_index (local.get $i) (local.get $j)))
   )
 
   (func $count_alive_neighbours (param $i i32) (param $j i32) (result i32)
     ;; Compte les voisins vivants
+    (i32.const 0)
   )
 
   (func $should_live (param $i i32) (param $j i32) (result i32)
     ;; Applique les règles du jeu de la vie
+    (i32.const 0)
   )
 
   (func $step
