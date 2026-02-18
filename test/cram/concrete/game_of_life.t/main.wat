@@ -15,18 +15,27 @@
 
   (func $coords_to_index (param $i i32) (param $j i32) (result i32)
     ;; Convertit (i,j) en index 1D
-    ;; return i * grid_width + j
-    (i32.add
-      (i32.mul (local.get $i) (global.get $grid_width))
-      (local.get $j)
+    ;; return (i * grid_width + j) * 4 (offset mémoire en bytes pour un i32)
+    (i32.shl
+      (i32.add
+        (i32.mul (local.get $i) (global.get $grid_width))
+        (local.get $j)
+      )
+      (i32.const 2)
     )
   )
 
   (func $index_to_coords (param $index i32) (result i32 i32)
     ;; Convertit index 1D en (i,j)
-    ;; return (index / grid_width, index % grid_width)
-    (i32.div_u (local.get $index) (global.get $grid_width))
-    (i32.rem_u (local.get $index) (global.get $grid_width))
+    ;; return ((index / 4) / grid_width, (index / 4) % grid_width)
+    (i32.div_u
+      (i32.shr_u (local.get $index) (i32.const 2))
+      (global.get $grid_width)
+    )
+    (i32.rem_u
+      (i32.shr_u (local.get $index) (i32.const 2))
+      (global.get $grid_width)
+    )
   )
 
   (func $init_grid
@@ -165,7 +174,7 @@
     (local.set $col (i32.const 0))
     (loop $loop
       (local.set $i (call $coords_to_index (local.get $ligne) (local.get $col)))
-      (local.set $cellule (i32.load8_u (local.get $i)))
+      (local.set $cellule (i32.load (local.get $i)))
       (call $print_cell (local.get $cellule))
       (local.set $col (i32.add (local.get $col) (i32.const 1)))
       (br_if $loop (i32.lt_u (local.get $col) (global.get $grid_width)))
