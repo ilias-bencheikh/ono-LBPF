@@ -63,7 +63,76 @@
 
   (func $count_alive_neighbours (param $i i32) (param $j i32) (result i32)
     ;; Compte les voisins vivants
-    (i32.const 0)
+    (local $count i32)
+    (local $ni i32)
+    (local $nj i32)
+    (local.set $count (i32.const 0))
+
+    ;; (i-1, j-1)
+    (local.set $ni (i32.sub (local.get $i) (i32.const 1)))
+    (local.set $nj (i32.sub (local.get $j) (i32.const 1)))
+    (if (i32.and
+          (i32.and (i32.ge_s (local.get $ni) (i32.const 0)) (i32.lt_s (local.get $ni) (global.get $grid_height)))
+          (i32.and (i32.ge_s (local.get $nj) (i32.const 0)) (i32.lt_s (local.get $nj) (global.get $grid_width))))
+      (then (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $ni) (local.get $nj))))))
+
+    ;; (i-1, j)
+    (local.set $ni (i32.sub (local.get $i) (i32.const 1)))
+    (local.set $nj (local.get $j))
+    (if (i32.and
+          (i32.and (i32.ge_s (local.get $ni) (i32.const 0)) (i32.lt_s (local.get $ni) (global.get $grid_height)))
+          (i32.and (i32.ge_s (local.get $nj) (i32.const 0)) (i32.lt_s (local.get $nj) (global.get $grid_width))))
+      (then (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $ni) (local.get $nj))))))
+
+    ;; (i-1, j+1)
+    (local.set $ni (i32.sub (local.get $i) (i32.const 1)))
+    (local.set $nj (i32.add (local.get $j) (i32.const 1)))
+    (if (i32.and
+          (i32.and (i32.ge_s (local.get $ni) (i32.const 0)) (i32.lt_s (local.get $ni) (global.get $grid_height)))
+          (i32.and (i32.ge_s (local.get $nj) (i32.const 0)) (i32.lt_s (local.get $nj) (global.get $grid_width))))
+      (then (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $ni) (local.get $nj))))))
+
+    ;; (i, j-1)
+    (local.set $ni (local.get $i))
+    (local.set $nj (i32.sub (local.get $j) (i32.const 1)))
+    (if (i32.and
+          (i32.and (i32.ge_s (local.get $ni) (i32.const 0)) (i32.lt_s (local.get $ni) (global.get $grid_height)))
+          (i32.and (i32.ge_s (local.get $nj) (i32.const 0)) (i32.lt_s (local.get $nj) (global.get $grid_width))))
+      (then (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $ni) (local.get $nj))))))
+
+    ;; (i, j+1)
+    (local.set $ni (local.get $i))
+    (local.set $nj (i32.add (local.get $j) (i32.const 1)))
+    (if (i32.and
+          (i32.and (i32.ge_s (local.get $ni) (i32.const 0)) (i32.lt_s (local.get $ni) (global.get $grid_height)))
+          (i32.and (i32.ge_s (local.get $nj) (i32.const 0)) (i32.lt_s (local.get $nj) (global.get $grid_width))))
+      (then (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $ni) (local.get $nj))))))
+
+    ;; (i+1, j-1)
+    (local.set $ni (i32.add (local.get $i) (i32.const 1)))
+    (local.set $nj (i32.sub (local.get $j) (i32.const 1)))
+    (if (i32.and
+          (i32.and (i32.ge_s (local.get $ni) (i32.const 0)) (i32.lt_s (local.get $ni) (global.get $grid_height)))
+          (i32.and (i32.ge_s (local.get $nj) (i32.const 0)) (i32.lt_s (local.get $nj) (global.get $grid_width))))
+      (then (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $ni) (local.get $nj))))))
+
+    ;; (i+1, j)
+    (local.set $ni (i32.add (local.get $i) (i32.const 1)))
+    (local.set $nj (local.get $j))
+    (if (i32.and
+          (i32.and (i32.ge_s (local.get $ni) (i32.const 0)) (i32.lt_s (local.get $ni) (global.get $grid_height)))
+          (i32.and (i32.ge_s (local.get $nj) (i32.const 0)) (i32.lt_s (local.get $nj) (global.get $grid_width))))
+      (then (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $ni) (local.get $nj))))))
+
+    ;; (i+1, j+1)
+    (local.set $ni (i32.add (local.get $i) (i32.const 1)))
+    (local.set $nj (i32.add (local.get $j) (i32.const 1)))
+    (if (i32.and
+          (i32.and (i32.ge_s (local.get $ni) (i32.const 0)) (i32.lt_s (local.get $ni) (global.get $grid_height)))
+          (i32.and (i32.ge_s (local.get $nj) (i32.const 0)) (i32.lt_s (local.get $nj) (global.get $grid_width))))
+      (then (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $ni) (local.get $nj))))))
+
+    (local.get $count)
   )
 
   (func $should_live (param $i i32) (param $j i32) (result i32)
