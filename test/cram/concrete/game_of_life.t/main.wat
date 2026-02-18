@@ -137,7 +137,35 @@
 
   (func $should_live (param $i i32) (param $j i32) (result i32)
     ;; Applique les règles du jeu de la vie
-    (i32.const 0)
+    ;; return 1 si la cellule doit être vivante dans la prochaine génération, 0 sinon
+    (local $alive i32)
+    (local $neighbours i32)
+    (local $res i32)
+
+    (local.set $alive (call $is_alive (local.get $i) (local.get $j)))
+    (local.set $neighbours (call $count_alive_neighbours (local.get $i) (local.get $j)))
+    (local.set $res (i32.const 0)) ;; contient le resultat 
+
+    (if
+      (i32.ne (local.get $alive) (i32.const 0)) ;; si la cellule est vivante
+      (then
+        (if ;; si la cellule a 2 ou 3 voisins vivants elle reste vivante 
+          (i32.or 
+            (i32.eq (local.get $neighbours) (i32.const 2))
+            (i32.eq (local.get $neighbours) (i32.const 3))
+          )
+          (then (local.set $res (i32.const 1)))
+        )
+      )
+      (else
+        (if ;; si la cellule est morte et a 3 voisins vivants elle devient vivante
+          (i32.eq (local.get $neighbours) (i32.const 3))
+          (then (local.set $res (i32.const 1)))
+        )
+      )
+    )
+
+    (local.get $res)
   )
 
   (func $step
