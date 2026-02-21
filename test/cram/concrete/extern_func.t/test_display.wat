@@ -2,7 +2,7 @@
   (func $print_cell (import "ono" "print_cell") (param i32))
   (func $newline (import "ono" "newline"))
   (func $clear_screen (import "ono" "clear_screen"))
-  (func $sleep (import "ono" "sleep") (param i32))
+  (func $sleep (import "ono" "sleep") (param f32))
 
   (func $main
     ;; "🦊 🦊"
