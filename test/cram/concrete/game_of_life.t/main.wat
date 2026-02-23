@@ -179,6 +179,54 @@
 
   (func $step
     ;; Calcule la génération suivante
+    (local $i i32)
+    (local $j i32)
+    (local $k i32)
+
+    ;;offset pour la deuxième grille
+    (local $offset i32)
+    (local.set $offset 
+      (i32.shl
+        (i32.mul (global.get $grid_height) (global.get $grid_width))
+        (i32.const 2)
+      )
+    )
+    (local.set $i (i32.const 0))
+    (loop $loop_heigth
+      (local.set $j (i32.const 0))
+      (loop $loop_width 
+        ;;on store dans la 2eme grille en vie ou non
+        (i32.store 
+          (i32.add 
+            (call $coords_to_index (local.get $i) (local.get $j))
+            (local.get $offset)
+          )
+          (i32.or
+            (call $should_live (local.get $i)(local.get $j))
+            ( i32.eq (i32.rem_u (call $random_i32) (i32.const 10000) ) (i32.const 0) )  
+          )
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_width (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_heigth (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    ;;on store les resultat de la 2eme grille dans la première 
+    (local.set $k (i32.const 0))
+    (loop $loop_copy
+      (i32.store
+        (local.get $k)
+        (i32.load
+          (i32.add
+            (local.get $offset)
+            (local.get $k )
+          )
+        )
+      )
+      (local.set $k (i32.add (local.get $k)(i32.const 1)))
+      (br_if $loop_copy (i32.lt_u (local.get $k) (local.get $offset)))
+    )
   )
 
   ;; Fonction affichage 
@@ -220,6 +268,7 @@
   (func $main 
     (call $init_grid)
     (call $loop)
+    
   )
-
+  (start $main)
 )
