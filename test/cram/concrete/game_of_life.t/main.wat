@@ -5,6 +5,7 @@
   (import "ono" "newline" (func $newline))
   (import "ono" "clear_screen" (func $clear_screen))
   (import "ono" "random_i32" (func $random_i32 (result i32)))
+  (import "ono" "read_int" (func $read_int (result i32)))
 
   ;; initialisation de la grille
 
@@ -60,6 +61,12 @@
 
   (func $load_config (param $config_ptr i32)
     ;; Charge une configuration initiale
+  )
+
+  (func $read_dimensions
+    ;; Lit les dimensions du jeu depuis l'entrée utilisateur
+    (global.set $grid_width (call $read_int))
+    (global.set $grid_height (call $read_int))
   )
 
   ;; fonctions de logique du jeu
@@ -218,6 +225,7 @@
   )
 
   (func $main 
+    (call $read_dimensions)
     (call $init_grid)
     (call $loop)
   )
