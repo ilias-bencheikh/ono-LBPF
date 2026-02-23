@@ -41,6 +41,14 @@ let clear_screen (_ : unit) : (unit, _) Result.t =
   Buffer.clear display_buffer;
   Ok ()
 
+let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
+  try
+    let line = read_line () in
+    let value = Int32.of_string line in
+    Ok (Kdo.Concrete.I32.of_int32 value)
+  with _ ->
+    Error (`Msg "Invalid input: expected an integer")
+
 let m =
   let open Kdo.Concrete.Extern_func in
   let open Kdo.Concrete.Extern_func.Syntax in
@@ -52,6 +60,7 @@ let m =
     ; ("print_cell", Extern_func (i32 ^->. unit, print_cell))
     ; ("newline", Extern_func (unit ^->. unit, newline))
     ; ("clear_screen", Extern_func (unit ^->. unit, clear_screen))
+    ; ("read_int", Extern_func (unit ^->. i32, read_int))
     ]
   in
   {
