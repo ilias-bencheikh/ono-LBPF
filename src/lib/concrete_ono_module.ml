@@ -43,6 +43,7 @@ let clear_screen (_ : unit) : (unit, _) Result.t =
 
 let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
   try
+    print_endline "Entrer un entier:";
     let line = read_line () in
     let value = Int32.of_string line in
     Ok (Kdo.Concrete.I32.of_int32 value)
