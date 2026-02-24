@@ -279,7 +279,7 @@
     (then
       ;; corps de la boucle
       (call $print_grid)
-      (call $sleep (f32.const 1000))
+      (call $sleep (f32.const 100))
       (call $step)
       
       ;; incrémentation du compteur
