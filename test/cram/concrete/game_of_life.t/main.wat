@@ -288,7 +288,6 @@
       (call $loop)
     )
     )
->>>>>>> main
   )
 
   (func $main 
