@@ -273,10 +273,6 @@
   ;; Fonction de boucle principale
   (func $loop
 <<<<<<< HEAD
-    (call $print_grid)
-    (call $sleep (f32.const 100))
-    (call $step)
-    (call $loop)
 =======
     ;; vérification du step : max_steps == -1 (pas de limite) OU current_step < max_steps
     (if (i32.or
