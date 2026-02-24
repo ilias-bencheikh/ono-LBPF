@@ -38,8 +38,8 @@ let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
 
 let print_cell (cell_alive : Kdo.Concrete.I32.t) : (unit, _) Result.t =
   let is_alive = Kdo.Concrete.I32.to_int cell_alive in
-  if is_alive <> 0 then Buffer.add_string display_buffer "🦊"
-  else Buffer.add_string display_buffer " ";
+  if is_alive <> 0 then Buffer.add_string display_buffer "\027[30m\226\150\136\027[0m\027[30m\226\150\136\027[0m"
+  else Buffer.add_string display_buffer "\027[37m\226\150\136\027[0m\027[37m\226\150\136\027[0m";
   Ok ()
 
 let newline (_ : unit) : (unit, _) Result.t =
