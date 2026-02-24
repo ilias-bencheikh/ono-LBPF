@@ -7,9 +7,9 @@
   (import "ono" "random_i32" (func $random_i32 (result i32)))
 
   ;; initialisation de la grille
-
-  (global $grid_width (mut i32) (i32.const 90))
-  (global $grid_height (mut i32) (i32.const 50))
+  
+  (global $grid_width (mut i32) (i32.const 50))
+  (global $grid_height (mut i32) (i32.const 30))
 
   (memory $mem 1) 
 
@@ -260,7 +260,7 @@
   ;; Fonction de boucle principale
   (func $loop
     (call $print_grid)
-    (call $sleep (f32.const 1000))
+    (call $sleep (f32.const 100))
     (call $step)
     (call $loop)
   )
