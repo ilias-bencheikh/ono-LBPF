@@ -5,11 +5,17 @@
   (import "ono" "newline" (func $newline))
   (import "ono" "clear_screen" (func $clear_screen))
   (import "ono" "random_i32" (func $random_i32 (result i32)))
+  (import "ono" "read_int" (func $read_int (result i32)))
+  (import "ono" "get_max_steps" (func $get_max_steps (result i32)))
 
   ;; initialisation de la grille
   
   (global $grid_width (mut i32) (i32.const 50))
   (global $grid_height (mut i32) (i32.const 30))
+
+  ;; compteur de génération
+  (global $current_step (mut i32) (i32.const 0))
+  (global $max_steps (mut i32) (i32.const -1))
 
   (memory $mem 1) 
 
@@ -42,6 +48,7 @@
     ;; Initialise la grille (aléatoire ou depuis config)
     (local $i i32)
     (local $j i32)
+    (global.set $max_steps (call $get_max_steps))
     (local.set $i (i32.const 0))
     (loop $loop_i
       (local.set $j (i32.const 0))
@@ -60,6 +67,12 @@
 
   (func $load_config (param $config_ptr i32)
     ;; Charge une configuration initiale
+  )
+
+  (func $read_dimensions
+    ;; Lit les dimensions du jeu depuis l'entrée utilisateur
+    (global.set $grid_width (call $read_int))
+    (global.set $grid_height (call $read_int))
   )
 
   ;; fonctions de logique du jeu
@@ -259,13 +272,33 @@
 
   ;; Fonction de boucle principale
   (func $loop
+<<<<<<< HEAD
     (call $print_grid)
     (call $sleep (f32.const 100))
     (call $step)
     (call $loop)
+=======
+    ;; vérification du step : max_steps == -1 (pas de limite) OU current_step < max_steps
+    (if (i32.or
+      (i32.eq (global.get $max_steps) (i32.const -1))
+      (i32.le_u (global.get $current_step) (global.get $max_steps)))
+    (then
+      ;; corps de la boucle
+      (call $print_grid)
+      (call $sleep (f32.const 1000))
+      (call $step)
+      
+      ;; incrémentation du compteur
+      (global.set $current_step (i32.add (global.get $current_step) (i32.const 1)))
+      
+      (call $loop)
+    )
+    )
+>>>>>>> main
   )
 
   (func $main 
+    (call $read_dimensions)
     (call $init_grid)
     (call $loop)
     
