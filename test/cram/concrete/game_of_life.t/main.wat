@@ -249,7 +249,7 @@
     (local $cellule i32)
     (local.set $col (i32.const 0))
     (loop $loop
-      (local.set $i (call $coords_to_index (local.get $col) (local.get $ligne)))
+      (local.set $i (call $coords_to_index (local.get $ligne) (local.get $col)))
       (local.set $cellule (i32.load (local.get $i)))
       (call $print_cell (local.get $cellule))
       (local.set $col (i32.add (local.get $col) (i32.const 1)))
@@ -260,7 +260,7 @@
   ;; Fonction de boucle principale
   (func $loop
     (call $print_grid)
-    (call $sleep (f32.const 10))
+    (call $sleep (f32.const 1000))
     (call $step)
     (call $loop)
   )
