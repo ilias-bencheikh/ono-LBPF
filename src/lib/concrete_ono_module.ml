@@ -3,6 +3,19 @@ type extern_func = Kdo.Concrete.Extern_func.extern_func
 (* Buffer global pour l'affichage *)
 let display_buffer = Buffer.create 4096
 
+(* Variable pour stocker le nombre maximum de steps *)
+let max_steps : int option ref = ref None
+
+let set_max_steps (steps : int option) : unit =
+  max_steps := steps
+
+let get_max_steps (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
+  let value = match !max_steps with
+    | Some n -> Int32.of_int n
+    | None -> Int32.minus_one  (* -1 pour indiquer "pas de limite" *)
+  in
+  Ok (Kdo.Concrete.I32.of_int32 value)
+
 let print_i32 (n : Kdo.Concrete.I32.t) : (unit, _) Result.t =
   Logs.app (fun m -> m "%a" Kdo.Concrete.I32.pp n);
   Ok ()
@@ -62,6 +75,7 @@ let m =
     ; ("newline", Extern_func (unit ^->. unit, newline))
     ; ("clear_screen", Extern_func (unit ^->. unit, clear_screen))
     ; ("read_int", Extern_func (unit ^->. i32, read_int))
+    ; ("get_max_steps", Extern_func (unit ^->. i32, get_max_steps))
     ]
   in
   {

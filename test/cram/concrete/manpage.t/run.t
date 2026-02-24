@@ -4,7 +4,7 @@ Test the output of the man page:
          ono-concrete
   
   SYNOPSIS
-         ono concrete [--seed=INT] [OPTION]… FILE
+         ono concrete [--seed=INT] [--steps=INT] [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
@@ -14,6 +14,10 @@ Test the output of the man page:
          --seed=INT
              Sets the seed for the random number generator. If omitted, a
              non-deterministic seed is used.
+  
+         --steps=INT
+             Limits the number of simulation steps. If omitted, the simulation
+             runs indefinitely.
   
   COMMON OPTIONS
          --color=WHEN (absent=auto)

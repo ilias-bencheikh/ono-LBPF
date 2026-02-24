@@ -18,3 +18,4 @@
 - implementation de la fonction de comptage des voisins
 - implémentation de la fonction step
 - implémentation read_int, input utilisateur pour gérer les dimensions du jeu
+- implémentation de l'option --steps
