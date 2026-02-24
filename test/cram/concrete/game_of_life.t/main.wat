@@ -272,8 +272,6 @@
 
   ;; Fonction de boucle principale
   (func $loop
-<<<<<<< HEAD
-=======
     ;; vérification du step : max_steps == -1 (pas de limite) OU current_step < max_steps
     (if (i32.or
       (i32.eq (global.get $max_steps) (i32.const -1))
