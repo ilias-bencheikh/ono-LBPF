@@ -275,7 +275,7 @@
     ;; vérification du step : max_steps == -1 (pas de limite) OU current_step < max_steps
     (if (i32.or
       (i32.eq (global.get $max_steps) (i32.const -1))
-      (i32.lt_u (global.get $current_step) (global.get $max_steps)))
+      (i32.le_u (global.get $current_step) (global.get $max_steps)))
     (then
       ;; corps de la boucle
       (call $print_grid)
