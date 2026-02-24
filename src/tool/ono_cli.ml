@@ -80,3 +80,10 @@ let seed =
      non-deterministic seed is used."
   in
   Arg.(value & opt (some int) None (info [ "seed" ] ~doc))
+
+let steps =
+  let doc =
+    "Limits the number of simulation steps. If omitted, the simulation runs \
+     indefinitely."
+  in
+  Arg.(value & opt (some int) None (info [ "steps" ] ~doc))
