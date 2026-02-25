@@ -1,9 +1,10 @@
 open Syntax
 module Interpret = Kdo.Interpret.Concrete (Kdo.Interpret.Default_parameters)
 
-let run ~source_file ~max_steps =
+let run ~source_file ~max_steps ~use_graphics =
   (* Storage pour max_steps *)
-  Concrete_ono_module.set_max_steps max_steps;
+  if use_graphics then Concrete_ono_module_raylib.set_max_steps max_steps
+  else Concrete_ono_module.set_max_steps max_steps;
   
   (* Parsing. *)
   Logs.info (fun m -> m "Parsing file %a..." Fpath.pp source_file);
@@ -26,8 +27,11 @@ let run ~source_file ~max_steps =
   let link_state : Kdo.Concrete.Extern_func.extern_func Kdo.Link.State.t =
     Kdo.Link.State.empty ()
   in
+  let concrete_module =
+    if use_graphics then Concrete_ono_module_raylib.m else Concrete_ono_module.m
+  in
   let link_state =
-    Kdo.Link.Extern.modul Concrete_ono_module.m link_state ~name:"ono"
+    Kdo.Link.Extern.modul concrete_module link_state ~name:"ono"
   in
   let name = Some (Fpath.to_string source_file) in
   let* linked_module, link_state =

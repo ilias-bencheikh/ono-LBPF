@@ -87,3 +87,8 @@ let steps =
      indefinitely."
   in
   Arg.(value & opt (some int) None (info [ "steps" ] ~doc))
+
+let graphics =
+  let doc = "Enables graphical output." in
+  Arg.(value & flag (info [ "use-graphical-window" ] ~doc))
+  

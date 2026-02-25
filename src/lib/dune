@@ -3,10 +3,11 @@
  (modules
   concrete_driver
   concrete_ono_module
+    concrete_ono_module_raylib
   error
   symbolic_driver
   symbolic_ono_module
   syntax)
- (libraries fpath kdo logs)
+ (libraries fpath kdo logs raylib)
  (instrumentation
   (backend bisect_ppx)))

@@ -46,6 +46,7 @@
    (>= 0.5))
   (processor
    (>= 0.2))
+  raylib
   (sedlex
    (>= 3.3))
   (smtml
