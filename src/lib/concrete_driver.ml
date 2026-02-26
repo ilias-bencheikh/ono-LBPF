@@ -1,9 +1,10 @@
 open Syntax
 module Interpret = Kdo.Interpret.Concrete (Kdo.Interpret.Default_parameters)
 
-let run ~source_file ~max_steps =
-  (* Storage pour max_steps *)
+let run ~source_file ~max_steps ~display_last =
+  (* Storage pour max_steps / display_last *)
   Concrete_ono_module.set_max_steps max_steps;
+  Concrete_ono_module.set_display_last display_last;
   
   (* Parsing. *)
   Logs.info (fun m -> m "Parsing file %a..." Fpath.pp source_file);

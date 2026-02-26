@@ -7,6 +7,7 @@
   (import "ono" "random_i32" (func $random_i32 (result i32)))
   (import "ono" "read_int" (func $read_int (result i32)))
   (import "ono" "get_max_steps" (func $get_max_steps (result i32)))
+  (import "ono" "get_display_last" (func $get_display_last (result i32)))
 
   ;; initialisation de la grille
   
@@ -16,6 +17,7 @@
   ;; compteur de génération
   (global $current_step (mut i32) (i32.const 0))
   (global $max_steps (mut i32) (i32.const -1))
+  (global $display_last (mut i32) (i32.const -1))
 
   (memory $mem 1) 
 
@@ -49,6 +51,7 @@
     (local $i i32)
     (local $j i32)
     (global.set $max_steps (call $get_max_steps))
+    (global.set $display_last (call $get_display_last))
     (local.set $i (i32.const 0))
     (loop $loop_i
       (local.set $j (i32.const 0))
@@ -272,13 +275,33 @@
 
   ;; Fonction de boucle principale
   (func $loop
-    ;; vérification du step : max_steps == -1 (pas de limite) OU current_step < max_steps
+    ;; vérification du step : max_steps == -1 (pas de limite) OU current_step <= max_steps
     (if (i32.or
-      (i32.eq (global.get $max_steps) (i32.const -1))
+      (i32.eq (global.get $max_steps) (i32.const -1)) ;; pas de limite
       (i32.le_u (global.get $current_step) (global.get $max_steps)))
     (then
-      ;; corps de la boucle
-      (call $print_grid)
+      ;; vérification du diplay_last : display_last == -1 (pas de limite) OU current_step >= max_steps - display_last
+      (if (i32.or
+        (i32.eq (global.get $display_last) (i32.const -1))  ;; pas de limite
+        (i32.ge_u 
+          (global.get $current_step)
+          (i32.sub 
+            (global.get $max_steps)
+            (global.get $display_last)
+          )
+        )
+      )
+      (then
+        ;; Affichager la grille
+        (if (i32.gt_u (global.get $current_step) (i32.const 0))
+          (then
+            ;; Sépérateur entre les générations
+            (call $newline)
+          )
+        )
+        (call $print_grid)
+      ))
+      
       (call $sleep (f32.const 100))
       (call $step)
       

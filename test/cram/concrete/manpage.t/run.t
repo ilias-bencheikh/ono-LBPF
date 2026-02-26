@@ -4,13 +4,18 @@ Test the output of the man page:
          ono-concrete
   
   SYNOPSIS
-         ono concrete [--seed=INT] [--steps=INT] [OPTION]… FILE
+         ono concrete [--last=INT] [--seed=INT] [--steps=INT] [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
              Source file to analyze.
   
   OPTIONS
+         --last=INT
+             Displays only the last N configurations when used with --steps. If
+             omitted or if --steps is not provided, configurations are printed
+             normally.
+  
          --seed=INT
              Sets the seed for the random number generator. If omitted, a
              non-deterministic seed is used.
