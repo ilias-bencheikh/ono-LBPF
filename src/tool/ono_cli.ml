@@ -87,3 +87,10 @@ let steps =
      indefinitely."
   in
   Arg.(value & opt (some int) None (info [ "steps" ] ~doc))
+
+let last =
+  let doc =
+    "Displays only the last N configurations when used with --steps. If omitted \
+     or if --steps is not provided, configurations are printed normally."
+  in
+  Arg.(value & opt (some int) None (info [ "last" ] ~doc))
