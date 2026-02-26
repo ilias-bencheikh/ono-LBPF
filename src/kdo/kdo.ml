@@ -17,6 +17,9 @@ end
 
 module Symbolic = struct
   module I32 = Owi.Symbolic_i32
+  module I64 = Owi.Symbolic_i64
+  module F32 = Owi.Symbolic_f32
+  module F64 = Owi.Symbolic_f64
   module Extern_func = Owi.Symbolic_extern_func
   module Choice = Owi.Symbolic_choice
   module Driver = Owi.Symbolic_driver
