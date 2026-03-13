@@ -74,6 +74,12 @@ let source_file =
   Arg.(
     required & pos 0 (some existing_file_conv) None (info [] ~doc ~docv:"FILE"))
 
+let config_file = 
+  let doc = "Specify a file to initialize grid dimensions and live cells." in 
+  Arg. (
+    value & opt (some existing_file_conv) None (info ["c";"config"] ~doc ~docv:"CONFIG FILE")
+  )
+
 let seed =
   let doc =
     "Sets the seed for the random number generator. If omitted, a \

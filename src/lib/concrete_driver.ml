@@ -1,16 +1,24 @@
 open Syntax
 module Interpret = Kdo.Interpret.Concrete (Kdo.Interpret.Default_parameters)
 
-let run ~source_file ~max_steps ~display_last =
+let run ~source_file ~config_file ~max_steps ~display_last =
   (* Storage pour max_steps / display_last *)
   Concrete_ono_module.set_max_steps max_steps;
   Concrete_ono_module.set_display_last display_last;
+  
   
   (* Parsing. *)
   Logs.info (fun m -> m "Parsing file %a..." Fpath.pp source_file);
   let* wat_module = Kdo.Parse.Wat.Module.from_file source_file in
   Logs.debug (fun m ->
       m "Parsed module is:  @\n@[<v>%a@]" Kdo.Wat.Module.pp wat_module);
+  
+  let () = 
+    match config_file with 
+    | Some f -> Logs.info (fun m -> m "Parsing file %a..." Fpath.pp f);
+    Concrete_ono_module.read_config f;
+    | None -> ()
+  in
 
   (* Compiling to Wasm. *)
   Logs.info (fun m -> m "Compiling to Wasm...");
