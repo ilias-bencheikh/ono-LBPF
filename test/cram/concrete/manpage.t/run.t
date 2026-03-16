@@ -4,13 +4,16 @@ Test the output of the man page:
          ono-concrete
   
   SYNOPSIS
-         ono concrete [--last=INT] [--seed=INT] [--steps=INT] [OPTION]… FILE
+         ono concrete [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
              Source file to analyze.
   
   OPTIONS
+         -c CONFIG FILE, --config=CONFIG FILE
+             Specify a file to initialize grid dimensions and live cells.
+  
          --last=INT
              Displays only the last N configurations when used with --steps. If
              omitted or if --steps is not provided, configurations are printed
