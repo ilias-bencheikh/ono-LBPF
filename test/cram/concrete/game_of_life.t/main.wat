@@ -8,7 +8,7 @@
   (import "ono" "read_int" (func $read_int (result i32)))
   (import "ono" "get_max_steps" (func $get_max_steps (result i32)))
   (import "ono" "get_display_last" (func $get_display_last (result i32)))
-  (import "ono" "has_config" (func $has_config (result i32)))
+  (import "ono" "has_config" (func $has_config_call (result i32)))
   (import "ono" "get_width" (func $get_width (result i32)))
   (import "ono" "get_height" (func $get_height (result i32)))
   (import "ono" "get_cells_len" (func $get_cells_len (result i32)))
@@ -17,9 +17,10 @@
 
 
   ;; initialisation de la grille
-  
   (global $grid_width (mut i32) (i32.const 50))
   (global $grid_height (mut i32) (i32.const 30))
+  ;; est appelé avec une configuration ou non
+  (global $has_config (mut i32) (i32.const 0))
 
   ;; compteur de génération
   (global $current_step (mut i32) (i32.const 0))
@@ -27,6 +28,11 @@
   (global $display_last (mut i32) (i32.const -1))
 
   (memory $mem 1) 
+
+  
+  (func $init_has_config
+    (global.set $has_config (call $has_config_call))
+  )
 
   (func $coords_to_index (param $i i32) (param $j i32) (result i32)
     ;; Convertit (i,j) en index 1D
@@ -65,7 +71,7 @@
       (local.set $j (i32.const 0))
       (loop $loop_j
         ;;On choisis la valeur de la cellule (0 ou 1)
-        (if (call $has_config) 
+        (if (global.get $has_config) 
             (then 
               (local.set $cell (i32.const 0));; On initialise tout a 0 
               )
@@ -83,7 +89,7 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
     )
-    (if (call $has_config)
+    (if (global.get $has_config)
       (then (call $load_config))
     )
   )
@@ -354,7 +360,8 @@
   )
 
   (func $main 
-    (if (call $has_config)
+    (call $init_has_config)
+    (if (global.get $has_config)
       (then 
         (call $get_and_set_dimensions)
       )

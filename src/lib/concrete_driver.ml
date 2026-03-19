@@ -12,12 +12,13 @@ let run ~source_file ~config_file ~max_steps ~display_last =
   let* wat_module = Kdo.Parse.Wat.Module.from_file source_file in
   Logs.debug (fun m ->
       m "Parsed module is:  @\n@[<v>%a@]" Kdo.Wat.Module.pp wat_module);
-  
-  let () = 
+
+  let* _ = 
     match config_file with 
-    | Some f -> Logs.info (fun m -> m "Parsing file %a..." Fpath.pp f);
-    Concrete_ono_module.read_config f;
-    | None -> ()
+    | Some f -> 
+        Logs.info (fun m -> m "Parsing file %a..." Fpath.pp f);
+        Concrete_ono_module.read_config f
+    | None -> Ok ()
   in
 
   (* Compiling to Wasm. *)

@@ -28,33 +28,38 @@ let set_max_steps (steps : int option) : unit =
 let set_display_last (last : int option) : unit =
   display_last := last
 
-let read_config (config : Fpath.t ) : unit = 
+let read_config (config : Fpath.t ) : (unit, _) Result.t = 
   begin
   with_config := true;
 
-  let (w,h,cells) = In_channel.with_open_text (Fpath.to_string config) (fun ic ->
-  
-    let rec read_config_lines w h cells = 
-      match In_channel.input_line ic  with 
-      |None -> (w,h,cells)
-      |Some l -> 
-        let trim = String.trim l in
-        if trim = "" then read_config_lines w h cells 
-        else 
-          if String.starts_with ~prefix:"HEIGHT: " trim 
-            then let w' = int_of_string (String.sub trim 8 (String.length trim-8) ) in 
-              read_config_lines w' h cells 
+  try
+    let (w,h,cells) = In_channel.with_open_text (Fpath.to_string config) (fun ic ->
+    
+      let rec read_config_lines w h cells = 
+        match In_channel.input_line ic  with 
+        |None -> (w,h,cells)
+        |Some l -> 
+          let trim = String.trim l in
+          if trim = "" then read_config_lines w h cells 
           else 
-            if String.starts_with ~prefix:"WIDTH: " trim 
-            then let h' = int_of_string (String.sub trim 7 (String.length trim-7) ) in 
-              read_config_lines w h' cells 
+            if String.starts_with ~prefix:"HEIGHT: " trim 
+              then 
+                  let h' = 
+                  int_of_string (String.sub trim 8 (String.length trim-8) ) in 
+                  read_config_lines w h' cells 
             else 
-              match String.split_on_char ' ' trim |> List.filter (fun s -> s<> "") with
-              |[x;y] -> read_config_lines w h ((int_of_string x,int_of_string y)::cells )
-              |_ -> read_config_lines w h cells
-    in read_config_lines 0 0 [] 
-  )
-  in game_config := Some {height=h;width=w;cells = cells};
+              if String.starts_with ~prefix:"WIDTH: " trim 
+              then let w' = int_of_string (String.sub trim 7 (String.length trim-7) ) in 
+                read_config_lines w' h cells 
+              else 
+                match String.split_on_char ' ' trim |> List.filter (fun s -> s<> "") with
+                |[x;y] -> read_config_lines w h ((int_of_string x,int_of_string y)::cells )
+                |_ -> read_config_lines w h cells
+      in read_config_lines 0 0 [] 
+    )
+    in game_config := Some {height=h;width=w;cells = cells};
+    Ok()
+  with _ -> Error (`Msg "Invalide configuration file format ")
   end
 
 let get_width (_:unit) : (Kdo.Concrete.I32.t,_) Result.t = 
