@@ -1,5 +1,16 @@
 type extern_func = Kdo.Concrete.Extern_func.extern_func
 
+
+
+type configuration = {
+  width : int;
+  height : int;
+  cells : (int * int) list; 
+}
+
+(* Variable pour savoir si la grid est generee par un fichier de configuration *)
+let with_config : bool ref = ref false 
+
 (* Buffer global pour l'affichage *)
 let display_buffer = Buffer.create 4096
 
@@ -9,11 +20,88 @@ let max_steps : int option ref = ref None
 (* Variable pour stocker le nombre de configurations a afficher *)
 let display_last : int option ref = ref None
 
+let game_config : configuration option ref = ref None
+
 let set_max_steps (steps : int option) : unit =
   max_steps := steps
 
 let set_display_last (last : int option) : unit =
   display_last := last
+
+let read_config (config : Fpath.t ) : (unit, _) Result.t = 
+  begin
+  with_config := true;
+
+  try
+    let (w,h,cells) = In_channel.with_open_text (Fpath.to_string config) (fun ic ->
+    
+      let rec read_config_lines w h cells = 
+        match In_channel.input_line ic  with 
+        |None -> (w,h,cells)
+        |Some l -> 
+          let trim = String.trim l in
+          if trim = "" then read_config_lines w h cells 
+          else 
+            if String.starts_with ~prefix:"HEIGHT: " trim 
+              then 
+                  let h' = 
+                  int_of_string (String.sub trim 8 (String.length trim-8) ) in 
+                  read_config_lines w h' cells 
+            else 
+              if String.starts_with ~prefix:"WIDTH: " trim 
+              then let w' = int_of_string (String.sub trim 7 (String.length trim-7) ) in 
+                read_config_lines w' h cells 
+              else 
+                match String.split_on_char ' ' trim |> List.filter (fun s -> s<> "") with
+                |[x;y] -> read_config_lines w h ((int_of_string x,int_of_string y)::cells )
+                |_ -> read_config_lines w h cells
+      in read_config_lines 0 0 [] 
+    )
+    in game_config := Some {height=h;width=w;cells = cells};
+    Ok()
+  with _ -> Error (`Msg "Invalide configuration file format ")
+  end
+
+let get_width (_:unit) : (Kdo.Concrete.I32.t,_) Result.t = 
+  let value = match !game_config with
+    | Some config -> Int32.of_int config.width
+    | None -> Int32.minus_one  (* -1 sinon *)
+  in
+  Ok (Kdo.Concrete.I32.of_int32 value)
+
+let get_height (_:unit) : (Kdo.Concrete.I32.t,_) Result.t = 
+  let value = match !game_config with
+    | Some config -> Int32.of_int config.height
+    | None -> Int32.minus_one  (* -1 sinon *)
+  in
+  Ok (Kdo.Concrete.I32.of_int32 value)
+
+let get_cells_len (_:unit) : (Kdo.Concrete.I32.t,_) Result.t = 
+  let value = match !game_config with
+    | Some config -> Int32.of_int (List.length config.cells)
+    | None -> Int32.minus_one  (* -1 sinon *)
+  in
+  Ok (Kdo.Concrete.I32.of_int32 value)
+
+let get_ix (index : Kdo.Concrete.I32.t) : (Kdo.Concrete.I32.t,_) Result.t = 
+  let idx = Kdo.Concrete.I32.to_int index in
+  match !game_config with
+  | Some cfg when idx >= 0 && idx < List.length cfg.cells ->
+      let (x, _) = List.nth cfg.cells idx in
+      Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int x))
+  | _ -> Ok (Kdo.Concrete.I32.of_int32 (Int32.minus_one))
+
+let get_iy (index : Kdo.Concrete.I32.t) : (Kdo.Concrete.I32.t,_) Result.t = 
+  let idy = Kdo.Concrete.I32.to_int index in
+  match !game_config with
+  | Some cfg when idy >= 0 && idy < List.length cfg.cells ->
+      let (_, y) = List.nth cfg.cells idy in
+      Ok (Kdo.Concrete.I32.of_int32 (Int32.of_int y))
+  | _ -> Ok (Kdo.Concrete.I32.of_int32 (Int32.minus_one))
+
+let has_config (_:unit) : (Kdo.Concrete.I32.t,_) Result.t = 
+  let val_bool = if !with_config then 1l else 0l  in 
+  Ok (Kdo.Concrete.I32.of_int32 val_bool)
 
 let get_max_steps (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
   let value = match !max_steps with
@@ -90,6 +178,12 @@ let m =
     ; ("read_int", Extern_func (unit ^->. i32, read_int))
     ; ("get_max_steps", Extern_func (unit ^->. i32, get_max_steps))
     ; ("get_display_last", Extern_func (unit ^->. i32, get_display_last))
+    ; ("has_config", Extern_func (unit ^->. i32,has_config))
+    ; ("get_width", Extern_func (unit ^->. i32,get_width))
+    ; ("get_height", Extern_func (unit ^->. i32,get_height))
+    ; ("get_cells_len", Extern_func (unit ^->. i32,get_cells_len))
+    ; ("get_ix", Extern_func (i32 ^->. i32,get_ix))
+    ; ("get_iy", Extern_func (i32 ^->. i32,get_iy))
     ]
   in
   {

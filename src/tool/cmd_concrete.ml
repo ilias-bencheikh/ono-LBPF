@@ -9,6 +9,7 @@ let term =
   let open Term.Syntax in
   let+ () = setup_log
   and+ source_file = source_file
+  and+ config_file = config_file
   and+ my_seed = seed
   and+ my_steps = steps
   and+ my_last = last
@@ -19,7 +20,7 @@ let term =
     match my_seed with Some s -> Random.init s | None -> Random.self_init ()
   in
 
-  Ono.Concrete_driver.run ~source_file ~max_steps:my_steps ~display_last:my_last
+  Ono.Concrete_driver.run ~source_file ~config_file ~max_steps:my_steps ~display_last:my_last
   |> function
   | Ok () -> Ok ()
   | Error e -> Error (`Msg (Kdo.R.err_to_string e))
