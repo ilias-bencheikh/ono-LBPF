@@ -74,6 +74,12 @@ let source_file =
   Arg.(
     required & pos 0 (some existing_file_conv) None (info [] ~doc ~docv:"FILE"))
 
+let config_file = 
+  let doc = "Specify a file to initialize grid dimensions and live cells." in 
+  Arg. (
+    value & opt (some existing_file_conv) None (info ["c";"config"] ~doc ~docv:"CONFIG FILE")
+  )
+
 let seed =
   let doc =
     "Sets the seed for the random number generator. If omitted, a \
@@ -88,6 +94,13 @@ let steps =
   in
   Arg.(value & opt (some int) None (info [ "steps" ] ~doc))
 
+let last =
+  let doc =
+    "Displays only the last N configurations when used with --steps. If omitted \
+     or if --steps is not provided, configurations are printed normally."
+  in
+  Arg.(value & opt (some int) None (info [ "last" ] ~doc))
+  
 let graphics =
   let doc = "Enables graphical output." in
   Arg.(value & flag (info [ "use-graphical-window" ] ~doc))

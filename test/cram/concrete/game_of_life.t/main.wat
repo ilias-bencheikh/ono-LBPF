@@ -7,17 +7,32 @@
   (import "ono" "random_i32" (func $random_i32 (result i32)))
   (import "ono" "read_int" (func $read_int (result i32)))
   (import "ono" "get_max_steps" (func $get_max_steps (result i32)))
+  (import "ono" "get_display_last" (func $get_display_last (result i32)))
+  (import "ono" "has_config" (func $has_config_call (result i32)))
+  (import "ono" "get_width" (func $get_width (result i32)))
+  (import "ono" "get_height" (func $get_height (result i32)))
+  (import "ono" "get_cells_len" (func $get_cells_len (result i32)))
+  (import "ono" "get_ix" (func $get_ix (param i32) (result i32)))
+  (import "ono" "get_iy" (func $get_iy (param i32) (result i32)))
+
 
   ;; initialisation de la grille
-
-  (global $grid_width (mut i32) (i32.const 90))
-  (global $grid_height (mut i32) (i32.const 50))
+  (global $grid_width (mut i32) (i32.const 50))
+  (global $grid_height (mut i32) (i32.const 30))
+  ;; est appelé avec une configuration ou non
+  (global $has_config (mut i32) (i32.const 0))
 
   ;; compteur de génération
   (global $current_step (mut i32) (i32.const 0))
   (global $max_steps (mut i32) (i32.const -1))
+  (global $display_last (mut i32) (i32.const -1))
 
   (memory $mem 1) 
+
+  
+  (func $init_has_config
+    (global.set $has_config (call $has_config_call))
+  )
 
   (func $coords_to_index (param $i i32) (param $j i32) (result i32)
     ;; Convertit (i,j) en index 1D
@@ -44,18 +59,29 @@
     )
   )
 
-  (func $init_grid
+  (func $init_grid 
     ;; Initialise la grille (aléatoire ou depuis config)
     (local $i i32)
     (local $j i32)
+    (local $cell i32)
     (global.set $max_steps (call $get_max_steps))
+    (global.set $display_last (call $get_display_last))
     (local.set $i (i32.const 0))
     (loop $loop_i
       (local.set $j (i32.const 0))
       (loop $loop_j
+        ;;On choisis la valeur de la cellule (0 ou 1)
+        (if (global.get $has_config) 
+            (then 
+              (local.set $cell (i32.const 0));; On initialise tout a 0 
+              )
+            (else
+              (local.set $cell(i32.and (call $random_i32) (i32.const 1))) ;; 0 ou 1 aléatoire 
+            )
+          )
         (i32.store 
           (call $coords_to_index (local.get $i) (local.get $j))
-          (i32.and (call $random_i32) (i32.const 1)) ;; 0 ou 1 aléatoire
+          (local.get $cell)
         )
         (local.set $j (i32.add (local.get $j) (i32.const 1)))
         (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
@@ -63,10 +89,33 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
     )
+    (if (global.get $has_config)
+      (then (call $load_config))
+    )
   )
 
-  (func $load_config (param $config_ptr i32)
+  (func $load_config 
     ;; Charge une configuration initiale
+    (local $i i32)
+    (local $cells_len i32)
+
+    (local.set $cells_len (call $get_cells_len))
+    (local.set $i (i32.const 0))
+    (loop $loop_cells
+      (i32.store
+        (call $coords_to_index (call $get_ix (local.get $i))(call $get_iy (local.get $i)))
+        (i32.const 1)
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_cells (i32.lt_u (local.get $i) (local.get $cells_len )))
+    )
+  )
+
+
+  (func $get_and_set_dimensions
+    ;; Recupere et applique au var global les dimensions depuis les fonctions externe Ono
+    (global.set $grid_width (call $get_width))
+    (global.set $grid_height (call $get_height))
   )
 
   (func $read_dimensions
@@ -272,14 +321,34 @@
 
   ;; Fonction de boucle principale
   (func $loop
-    ;; vérification du step : max_steps == -1 (pas de limite) OU current_step < max_steps
+    ;; vérification du step : max_steps == -1 (pas de limite) OU current_step <= max_steps
     (if (i32.or
-      (i32.eq (global.get $max_steps) (i32.const -1))
+      (i32.eq (global.get $max_steps) (i32.const -1)) ;; pas de limite
       (i32.le_u (global.get $current_step) (global.get $max_steps)))
     (then
-      ;; corps de la boucle
-      (call $print_grid)
-      (call $sleep (f32.const 1000))
+      ;; vérification du diplay_last : display_last == -1 (pas de limite) OU current_step >= max_steps - display_last
+      (if (i32.or
+        (i32.eq (global.get $display_last) (i32.const -1))  ;; pas de limite
+        (i32.ge_u 
+          (global.get $current_step)
+          (i32.sub 
+            (global.get $max_steps)
+            (global.get $display_last)
+          )
+        )
+      )
+      (then
+        ;; Affichager la grille
+        (if (i32.gt_u (global.get $current_step) (i32.const 0))
+          (then
+            ;; Sépérateur entre les générations
+            (call $newline)
+          )
+        )
+        (call $print_grid)
+      ))
+      
+      (call $sleep (f32.const 100))
       (call $step)
       
       ;; incrémentation du compteur
@@ -291,7 +360,15 @@
   )
 
   (func $main 
-    (call $read_dimensions)
+    (call $init_has_config)
+    (if (global.get $has_config)
+      (then 
+        (call $get_and_set_dimensions)
+      )
+      (else
+        (call $read_dimensions)
+      )
+    )
     (call $init_grid)
     (call $loop)
     
