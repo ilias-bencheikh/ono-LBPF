@@ -100,3 +100,8 @@ let last =
      or if --steps is not provided, configurations are printed normally."
   in
   Arg.(value & opt (some int) None (info [ "last" ] ~doc))
+  
+let graphics =
+  let doc = "Enables graphical output." in
+  Arg.(value & flag (info [ "use-graphical-window" ] ~doc))
+  
