@@ -1,98 +1,75 @@
-type extern_func = Kdo.Concrete.Extern_func.extern_func
+include Concrete_ono_module
 
-(* Buffer global pour l'affichage *)
+let cell_size = 20
+let current_x = ref 0
+let current_y = ref 0
+let window_initialized = ref false
 
 let setup () =
-  Raylib.init_window 800 450 "raylib [core] example - basic window";
-  Raylib.set_target_fps 60
-let display_buffer = Buffer.create 4096
+  if not !window_initialized then begin
+    Raylib.init_window 800 600 "Jeu de la vie";
+    Raylib.set_target_fps 60;
+    window_initialized := true
+  end
 
-(* Variable pour stocker le nombre maximum de steps *)
-let max_steps : int option ref = ref None
-
-let set_max_steps (steps : int option) : unit =
-  max_steps := steps
-
-let get_max_steps (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
-  let value = match !max_steps with
-    | Some n -> Int32.of_int n
-    | None -> Int32.minus_one  (* -1 pour indiquer "pas de limite" *)
-  in
-  Ok (Kdo.Concrete.I32.of_int32 value)
-
-let print_i32 (n : Kdo.Concrete.I32.t) : (unit, _) Result.t =
-  Logs.app (fun m -> m "%a" Kdo.Concrete.I32.pp n);
-  Ok ()
-
-let print_i64 (n : Kdo.Concrete.I64.t) : (unit, _) Result.t =
-  Logs.app (fun m -> m "%a" Kdo.Concrete.I64.pp n);
-  Ok ()
-
-let random_i32 (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
-  let randint = Random.int32 Int32.max_int in
-  Ok (Kdo.Concrete.I32.of_int32 randint)
-
-(* Fonctions externes *)
-
-let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
-  let ms = Kdo.Concrete.F32.to_float milliseconds in
-  let seconds = ms /. 1000.0 in
-  Unix.sleepf seconds;
+let clear_screen (_ : unit) : (unit, _) Result.t =
+  setup ();
+  if Raylib.window_should_close () then exit 0;
+  Raylib.begin_drawing ();
+  Raylib.clear_background Raylib.Color.raywhite;
+  current_x := 0;
+  current_y := 0;
   Ok ()
 
 let print_cell (cell_alive : Kdo.Concrete.I32.t) : (unit, _) Result.t =
-  if Raylib.window_should_close () then begin Raylib.close_window (); Ok() end
-  else
-    let open Raylib in
-    begin_drawing ();
-    clear_background Color.raywhite;
-    draw_text "Congrats! You created your first window!" 190 200 20
-      Color.lightgray;
-    end_drawing ();
   let is_alive = Kdo.Concrete.I32.to_int cell_alive in
-  if is_alive <> 0 then Buffer.add_string display_buffer "🦊"
-  else Buffer.add_string display_buffer " ";
+  if is_alive <> 0 then
+    Raylib.draw_rectangle !current_x !current_y cell_size cell_size
+      Raylib.Color.black
+  else begin
+    Raylib.draw_rectangle !current_x !current_y cell_size cell_size
+      Raylib.Color.raywhite;
+    Raylib.draw_rectangle_lines !current_x !current_y cell_size cell_size
+      Raylib.Color.lightgray
+  end;
+  current_x := !current_x + cell_size;
   Ok ()
 
 let newline (_ : unit) : (unit, _) Result.t =
-  Buffer.add_char display_buffer '\n';
+  current_x := 0;
+  current_y := !current_y + cell_size;
   Ok ()
 
-let clear_screen (_ : unit) : (unit, _) Result.t =
-  (* Affiche le contenu du buffer *)
-  Buffer.output_buffer stdout display_buffer;
-  Out_channel.flush stdout;
-  (* Nettoyage du buffer *)
-  Buffer.clear display_buffer;
+let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
+  let ms = Kdo.Concrete.F32.to_float milliseconds in
+  Raylib.end_drawing ();
+  Unix.sleepf (ms /. 1000.0);
   Ok ()
-
-let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
-  Ok(Kdo.Concrete.I32.of_int32 (Int32.of_int 50))
-  (* try
-    print_endline "Entrer un entier:";
-    let line = read_line () in
-    let value = Int32.of_string line in
-    Ok (Kdo.Concrete.I32.of_int32 value)
-  with _ ->
-    Error (`Msg "Invalid input: expected an integer") *)
 
 let m =
   let open Kdo.Concrete.Extern_func in
   let open Kdo.Concrete.Extern_func.Syntax in
   let functions =
-    [ ("print_i32", Extern_func (i32 ^->. unit, print_i32))
-    ; ("print_i64", Extern_func (i64 ^->. unit, print_i64))
-    ; ("random_i32", Extern_func (unit ^->. i32, random_i32))
-    ; ("sleep", Extern_func (f32 ^->. unit, sleep))
-    ; ("print_cell", Extern_func (i32 ^->. unit, print_cell))
-    ; ("newline", Extern_func (unit ^->. unit, newline))
-    ; ("clear_screen", Extern_func (unit ^->. unit, clear_screen))
-    ; ("read_int", Extern_func (unit ^->. i32, read_int))
-    ; ("get_max_steps", Extern_func (unit ^->. i32, get_max_steps))
+    [
+      ("print_i32", Extern_func (i32 ^->. unit, print_i32));
+      ("print_i64", Extern_func (i64 ^->. unit, print_i64));
+      ("random_i32", Extern_func (unit ^->. i32, random_i32));
+      ("sleep", Extern_func (f32 ^->. unit, sleep));
+      ("print_cell", Extern_func (i32 ^->. unit, print_cell));
+      ("newline", Extern_func (unit ^->. unit, newline));
+      ("clear_screen", Extern_func (unit ^->. unit, clear_screen));
+      ("read_int", Extern_func (unit ^->. i32, read_int));
+      ("get_max_steps", Extern_func (unit ^->. i32, get_max_steps));
+      ("get_display_last", Extern_func (unit ^->. i32, get_display_last));
+      ("has_config", Extern_func (unit ^->. i32, has_config));
+      ("get_width", Extern_func (unit ^->. i32, get_width));
+      ("get_height", Extern_func (unit ^->. i32, get_height));
+      ("get_cells_len", Extern_func (unit ^->. i32, get_cells_len));
+      ("get_ix", Extern_func (i32 ^->. i32, get_ix));
+      ("get_iy", Extern_func (i32 ^->. i32, get_iy));
     ]
   in
   {
     Kdo.Extern.Module.functions;
     func_type = Kdo.Concrete.Extern_func.extern_type;
   }
-let () = setup () 
