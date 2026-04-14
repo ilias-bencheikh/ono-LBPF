@@ -100,3 +100,9 @@ let last =
      or if --steps is not provided, configurations are printed normally."
   in
   Arg.(value & opt (some int) None (info [ "last" ] ~doc))
+
+let use_graphical_window =
+  let doc =
+    "Use the graphical raylib backend."
+  in
+  Arg.(value & flag (info [ "use-graphical-window" ] ~doc))
