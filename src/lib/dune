@@ -2,11 +2,13 @@
  (public_name ono)
  (modules
   concrete_driver
+    concrete_graphical_ono_module
+    concrete_ono_common
   concrete_ono_module
   error
   symbolic_driver
   symbolic_ono_module
   syntax)
- (libraries fpath kdo logs)
+ (libraries fpath kdo logs raylib)
  (instrumentation
   (backend bisect_ppx)))

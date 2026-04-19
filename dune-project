@@ -52,6 +52,7 @@
    (= 0.19.0))
   (synchronizer
    (>= 0.2))
+  raylib
   (uutf
    (>= 1.0.3))
   (xmlm

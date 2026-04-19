@@ -13,6 +13,7 @@ let term =
   and+ my_seed = seed
   and+ my_steps = steps
   and+ my_last = last
+  and+ use_graphical_window = use_graphical_window
   in
 
   (* On initialise le generateur avant de run le fichier .wat *)
@@ -20,7 +21,8 @@ let term =
     match my_seed with Some s -> Random.init s | None -> Random.self_init ()
   in
 
-  Ono.Concrete_driver.run ~source_file ~config_file ~max_steps:my_steps ~display_last:my_last
+  Ono.Concrete_driver.run ~source_file ~config_file ~max_steps:my_steps
+    ~display_last:my_last ~use_graphical_window
   |> function
   | Ok () -> Ok ()
   | Error e -> Error (`Msg (Kdo.R.err_to_string e))
