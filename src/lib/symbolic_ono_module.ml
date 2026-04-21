@@ -13,8 +13,9 @@ let read_int () : Kdo.Symbolic.I32.t Kdo.Symbolic.Choice.t =
     print_endline "Entrer un entier:";
     let line = read_line () in
     let value = Int32.of_string line in
-    Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int32 value)
-  with _ -> Error (`Msg "Invalid input: expected an integer")
+    Kdo.Symbolic.Choice.return
+      (Kdo.Symbolic.I32.of_int (Int32.to_int value))
+  with _ -> Kdo.Symbolic.Choice.trap (`Msg "Invalid input: expected an integer")
 
 let m =
   let open Kdo.Symbolic.Extern_func in
