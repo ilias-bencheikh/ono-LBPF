@@ -1,5 +1,5 @@
 Compute all solutions of a polynom:
-  $ printf "1\n-7\n14\n-8" | ono symbolic polynom.wat
+  $ printf "1\n-7\n14\n-8" | ono symbolic polynom.wat --no-stop-at-failure
   Entrer un entier:
   Entrer un entier:
   Entrer un entier:
