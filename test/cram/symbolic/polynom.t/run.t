@@ -19,9 +19,9 @@ Compute all solutions of a polynom:
   Entrer un entier:
   ono: [ERROR] Trap: unreachable
   model {
-    symbol symbol_0 i32 1
-    symbol symbol_1 i32 4
-    symbol symbol_2 i32 2
+    symbol symbol_0 i32 4
+    symbol symbol_1 i32 2
+    symbol symbol_2 i32 1
   }
   breadcrumbs 0 0 0 1 1
   

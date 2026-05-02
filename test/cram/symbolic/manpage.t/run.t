@@ -4,11 +4,16 @@ Test the output of the man page:
          ono-symbolic
   
   SYNOPSIS
-         ono symbolic [OPTION]… FILE
+         ono symbolic [--no-stop-at-failure] [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
              Source file to analyze.
+  
+  OPTIONS
+         --no-stop-at-failure
+             Continue symbolic exploration after a failure instead of stopping
+             at the first one.
   
   COMMON OPTIONS
          --color=WHEN (absent=auto)

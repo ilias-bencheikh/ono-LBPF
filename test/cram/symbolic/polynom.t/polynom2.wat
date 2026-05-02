@@ -98,10 +98,15 @@
                 (i32.eq (local.get $result_3) (i32.const 0)))
             (then
                 ;; Les racines doivent être différentes (comparer les racines elles-mêmes)
-                (if
-                    (i32.and
+                (if 
+                    (i32.and 
+                        (i32.and
                         (i32.ne (local.get $racine_1) (local.get $racine_2))
-                        (i32.ne (local.get $racine_2) (local.get $racine_3)))
+                        (i32.ne (local.get $racine_2) (local.get $racine_3))
+                        )
+                        (i32.ne (local.get $racine_1) (local.get $racine_3))
+                    )
+
                     (then
                         unreachable ;; BUG
                     )
