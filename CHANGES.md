@@ -20,3 +20,7 @@
 - implémentation read_int, input utilisateur pour gérer les dimensions du jeu
 - implémentation de l'option --steps
 - implémentation de l'option --last
+
+# Exécution Symbolique
+
+- préliminaire (polynome.wat)
