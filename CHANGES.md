@@ -24,3 +24,4 @@
 # Exécution Symbolique
 
 - préliminaire (polynome.wat)
+- implémentation du générateur de configurations (game_of_life.wat)
