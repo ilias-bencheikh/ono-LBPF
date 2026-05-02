@@ -33,7 +33,7 @@
 
     ;; Fonction principale
     (func $main
-        ;; Init des coeff
+        ;; Init des variables
         (local $a i32)
         (local $b i32)
         (local $c i32)
