@@ -106,3 +106,9 @@ let use_graphical_window =
     "Use the graphical raylib backend."
   in
   Arg.(value & flag (info [ "use-graphical-window" ] ~doc))
+
+let no_stop_at_failure =
+  let doc =
+    "Continue symbolic exploration after a failure instead of stopping at the first one."
+  in
+  Arg.(value & flag (info [ "no-stop-at-failure" ] ~doc))
