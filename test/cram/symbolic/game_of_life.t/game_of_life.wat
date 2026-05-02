@@ -210,17 +210,22 @@
   )
 
 
-
     (func $main 
 
         
 
         (local $i i32)
         (local $j i32)
+        (local $x i32)
+        (local $y i32) 
         (local $cell i32)
 
 
         (call $read_dimensions)
+
+        (local.set $x (call $read_int))
+        (local.set $y (call $read_int))
+
 
         (local.set $i (i32.const 0))
 
@@ -251,12 +256,15 @@
         ;;tour suivant
         (call $step)
 
-        ;;contrainte
+        ;;contrainte ()
 
         (if 
-            (i32.const 1)
+            (call $is_alive (local.get $x)(local.get $y))
             (then unreachable)
+            (else return)
+
         )
+        
     )
 
     (start $main)
