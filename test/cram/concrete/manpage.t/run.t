@@ -14,16 +14,16 @@ Test the output of the man page:
          -c CONFIG FILE, --config=CONFIG FILE
              Specify a file to initialize grid dimensions and live cells.
   
-         --last=VAL
+         --last=INT
              Displays only the last N configurations when used with --steps. If
              omitted or if --steps is not provided, configurations are printed
              normally.
   
-         --seed=VAL
+         --seed=INT
              Sets the seed for the random number generator. If omitted, a
              non-deterministic seed is used.
   
-         --steps=VAL
+         --steps=INT
              Limits the number of simulation steps. If omitted, the simulation
              runs indefinitely.
   
