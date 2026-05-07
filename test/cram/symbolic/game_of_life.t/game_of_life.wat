@@ -4,6 +4,11 @@
     (func $i32_symbol (import "ono" "i32_symbol") (result i32))
 
 
+
+    ;;Nombre des contraintes -1 
+    (global $nb_constraints i32 (i32.const 16))
+
+
     ;; initialisation de la grille
     (global $grid_width (mut i32) (i32.const 5))
     (global $grid_height (mut i32) (i32.const 5))
@@ -210,11 +215,112 @@
   )
 
 
+  ;;Les contraintes
+
+  ;;Contrainte numero 1 (is_alive etant le num 0)
+  (func $is_dead (param $i i32) (param $j i32) (result i32)
+    ;; Vérifie si une cellule est morte
+    ;; return 1 si mort, 0 sinon
+    (i32.eqz (i32.load (call $coords_to_index (local.get $i) (local.get $j))))
+  )
+  ;; 2. Au moins une vivante sur la grille
+  (func $at_least_one_alive (result i32) (i32.const 0))
+
+  ;; 3. Toutes les cellules sont vivantes
+  (func $all_alive (result i32) (i32.const 0))
+
+  ;; 4. Toutes les cellules sont mortes
+  (func $all_dead (result i32) (i32.const 0))
+
+  ;; 5. Ligne complète entre (x, y) et (x', y)
+  (func $full_line (param $x i32) (param $y i32) (param $x_prime i32) (result i32) (i32.const 0))
+
+  ;; 6. Colonne complète entre (x, y) et (x, y')
+  (func $full_column (param $x i32) (param $y i32) (param $y_prime i32) (result i32) (i32.const 0))
+
+  ;; 7. Exactement N cellules vivantes
+  (func $exactly_n_alive (param $n i32) (result i32) (i32.const 0))
+
+  ;; 8. Existe une cellule isolée
+  (func $has_isolated_cell (result i32) (i32.const 0))
+
+  ;; 9. Existe une cellule entourée de vivantes
+  (func $has_surrounded_cell (result i32) (i32.const 0))
+
+  ;; 10. Existe deux vivantes côte à côte
+  (func $has_two_adjacent_alive (result i32) (i32.const 0))
+
+  ;; 11. Existe un motif en "L" (3 cellules)
+  (func $has_l_pattern (result i32) (i32.const 0))
+
+  ;; 12. Existe un motif carré 2*2
+  (func $has_square_pattern (result i32) (i32.const 0))
+
+  ;; 13. Une cellule morte est devenue vivante
+  (func $dead_to_alive_transition (result i32) (i32.const 0))
+
+  ;; 14. Alternance vivante/morte sur ligne/colonne
+  (func $has_alternating_pattern (result i32) (i32.const 0))
+
+  ;; 15. Motif clignotant (oscillateur période 2)
+  (func $has_blinker_pattern (result i32) (i32.const 0))
+
+  ;; 16. Diagonale vivante de N cellules
+  (func $has_diagonal_n (param $n i32) (result i32) (i32.const 0))
+
+
+  ;; Gros match permetant de selectionner la bonne contrainte
+  (func $select_constraint (param $num_constraint i32) (param $x i32) (param $y i32) (result i32)
+
+    (local $res i32)
+
+    (if (i32.eq (local.get $num_constraint) (i32.const 0))
+      (then (local.set $res (call $is_alive (local.get $x) (local.get $y))))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 1))
+      (then (local.set $res (call $is_dead (local.get $x) (local.get $y))))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 2))
+      (then (local.set $res (call $at_least_one_alive)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 3))
+      (then (local.set $res (call $all_alive)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 4))
+      (then (local.set $res (call $all_dead)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 5))
+      (then (local.set $res (call $full_line (local.get $x) (local.get $y) (call $read_int))))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 6))
+      (then (local.set $res (call $full_column (local.get $x) (local.get $y) (call $read_int))))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 7))
+      (then (local.set $res (call $exactly_n_alive (call $read_int))))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 8))
+      (then (local.set $res (call $has_isolated_cell)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 9))
+      (then (local.set $res (call $has_surrounded_cell)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 10))
+      (then (local.set $res (call $has_two_adjacent_alive)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 11))
+      (then (local.set $res (call $has_l_pattern)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 12))
+      (then (local.set $res (call $has_square_pattern)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 13))
+      (then (local.set $res (call $dead_to_alive_transition)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 14))
+      (then (local.set $res (call $has_alternating_pattern)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 15))
+      (then (local.set $res (call $has_blinker_pattern)))
+    (else (if (i32.eq (local.get $num_constraint) (i32.const 16))
+      (then (local.set $res (call $has_diagonal_n (call $read_int))))
+    )))))))))))))))))))))))))))))))))
+    
+    (local.get $res)
+  )
+
+
+
+
     (func $main 
 
         
-
-        (local $i i32)
+        (local $num_constraint i32)
+        (local $i i32) 
         (local $j i32)
         (local $x i32)
         (local $y i32) 
@@ -222,10 +328,15 @@
 
 
         (call $read_dimensions)
+        ;;Le num de la contrainte 
+        (local.set $num_constraint (call $read_int))
+        (if (i32.gt_s (local.get $num_constraint) (global.get $nb_constraints ))
+          (then return)
+        )
 
         (local.set $x (call $read_int))
         (local.set $y (call $read_int))
-
+        
 
         (local.set $i (i32.const 0))
 
@@ -256,14 +367,12 @@
         ;;tour suivant
         (call $step)
 
-        ;;contrainte ()
-
-        (if 
-            (call $is_alive (local.get $x)(local.get $y))
-            (then unreachable)
-            (else return)
-
+        ;;contraintes ()
+        (if (call $select_constraint (local.get $num_constraint) (local.get $x) (local.get $y) ) 
+          (then unreachable)
+          (else return )
         )
+   
         
     )
 
