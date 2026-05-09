@@ -233,16 +233,96 @@
   (func $all_dead (result i32) (i32.const 0))
 
   ;; 5. Ligne complète entre (x, y) et (x', y)
-  (func $full_line (param $x i32) (param $y i32) (param $x_prime i32) (result i32) (i32.const 0))
+  (func $full_line (param $x i32) (param $y i32) (param $x_prime i32) (result i32)
+    (local $i i32)
+    (local $min_x i32)
+    (local $max_x i32)
+    (local.set $min_x (local.get $x))
+    (local.set $max_x (local.get $x_prime))
+    (if (i32.gt_s (local.get $x) (local.get $x_prime))
+      (then
+        (local.set $min_x (local.get $x_prime))
+        (local.set $max_x (local.get $x))
+      )
+    )
+    (local.set $i (local.get $min_x))
+    (loop $loop_line
+      (if (i32.eqz (call $is_alive (local.get $y) (local.get $i)))
+        (then (return (i32.const 0)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_line (i32.le_s (local.get $i) (local.get $max_x)))
+    )
+    (i32.const 1)
+  )
 
   ;; 6. Colonne complète entre (x, y) et (x, y')
-  (func $full_column (param $x i32) (param $y i32) (param $y_prime i32) (result i32) (i32.const 0))
+  (func $full_column (param $x i32) (param $y i32) (param $y_prime i32) (result i32)
+    (local $j i32)
+    (local $min_y i32)
+    (local $max_y i32)
+    (local.set $min_y (local.get $y))
+    (local.set $max_y (local.get $y_prime))
+    (if (i32.gt_s (local.get $y) (local.get $y_prime))
+      (then
+        (local.set $min_y (local.get $y_prime))
+        (local.set $max_y (local.get $y))
+      )
+    )
+    (local.set $j (local.get $min_y))
+    (loop $loop_column
+      (if (i32.eqz (call $is_alive (local.get $j) (local.get $x)))
+        (then (return (i32.const 0)))
+      )
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $loop_column (i32.le_s (local.get $j) (local.get $max_y)))
+    )
+    (i32.const 1)
+  )
 
   ;; 7. Exactement N cellules vivantes
-  (func $exactly_n_alive (param $n i32) (result i32) (i32.const 0))
+  (func $exactly_n_alive (param $n i32) (result i32)
+    (local $i i32)
+    (local $j i32)
+    (local $count i32)
+    (local.set $count (i32.const 0))
+    (local.set $i (i32.const 0))
+    (loop $loop_count_i
+      (local.set $j (i32.const 0))
+      (loop $loop_count_j
+        (local.set $count (i32.add (local.get $count) (call $is_alive (local.get $i) (local.get $j))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_count_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_count_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.eq (local.get $count) (local.get $n))
+  )
 
   ;; 8. Existe une cellule isolée
-  (func $has_isolated_cell (result i32) (i32.const 0))
+  (func $has_isolated_cell (result i32)
+    (local $i i32)
+    (local $j i32)
+    (local.set $i (i32.const 0))
+    (loop $loop_isolated_i
+      (local.set $j (i32.const 0))
+      (loop $loop_isolated_j
+        (if (call $is_alive (local.get $i) (local.get $j))
+          (then
+            (if (i32.eqz (call $count_alive_neighbours (local.get $i) (local.get $j)))
+              (then (return (i32.const 1)))
+            )
+          )
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_isolated_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_isolated_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.const 0)
+  )
 
   ;; 9. Existe une cellule entourée de vivantes
   (func $has_surrounded_cell (result i32) (i32.const 0))
@@ -270,7 +350,7 @@
 
 
   ;; Gros match permetant de selectionner la bonne contrainte
-  (func $select_constraint (param $num_constraint i32) (param $x i32) (param $y i32) (result i32)
+  (func $select_constraint (param $num_constraint i32) (param $x i32) (param $y i32) (param $x_prime i32) (param $y_prime i32) (param $n i32) (result i32)
 
     (local $res i32)
 
@@ -285,11 +365,11 @@
     (else (if (i32.eq (local.get $num_constraint) (i32.const 4))
       (then (local.set $res (call $all_dead)))
     (else (if (i32.eq (local.get $num_constraint) (i32.const 5))
-      (then (local.set $res (call $full_line (local.get $x) (local.get $y) (call $read_int))))
+      (then (local.set $res (call $full_line (local.get $x) (local.get $y) (local.get $x_prime))))
     (else (if (i32.eq (local.get $num_constraint) (i32.const 6))
-      (then (local.set $res (call $full_column (local.get $x) (local.get $y) (call $read_int))))
+      (then (local.set $res (call $full_column (local.get $x) (local.get $y) (local.get $y_prime))))
     (else (if (i32.eq (local.get $num_constraint) (i32.const 7))
-      (then (local.set $res (call $exactly_n_alive (call $read_int))))
+      (then (local.set $res (call $exactly_n_alive (local.get $n))))
     (else (if (i32.eq (local.get $num_constraint) (i32.const 8))
       (then (local.set $res (call $has_isolated_cell)))
     (else (if (i32.eq (local.get $num_constraint) (i32.const 9))
@@ -307,7 +387,7 @@
     (else (if (i32.eq (local.get $num_constraint) (i32.const 15))
       (then (local.set $res (call $has_blinker_pattern)))
     (else (if (i32.eq (local.get $num_constraint) (i32.const 16))
-      (then (local.set $res (call $has_diagonal_n (call $read_int))))
+      (then (local.set $res (call $has_diagonal_n (local.get $n))))
     )))))))))))))))))))))))))))))))))
     
     (local.get $res)
@@ -323,7 +403,10 @@
         (local $i i32) 
         (local $j i32)
         (local $x i32)
-        (local $y i32) 
+        (local $y i32)
+        (local $x_prime i32)
+        (local $y_prime i32)
+        (local $n i32)
         (local $cell i32)
 
 
@@ -336,6 +419,9 @@
 
         (local.set $x (call $read_int))
         (local.set $y (call $read_int))
+        (local.set $x_prime (call $read_int))
+        (local.set $y_prime (call $read_int))
+        (local.set $n (call $read_int))
         
 
         (local.set $i (i32.const 0))
@@ -368,7 +454,7 @@
         (call $step)
 
         ;;contraintes ()
-        (if (call $select_constraint (local.get $num_constraint) (local.get $x) (local.get $y) ) 
+        (if (call $select_constraint (local.get $num_constraint) (local.get $x) (local.get $y) (local.get $x_prime) (local.get $y_prime) (local.get $n)) 
           (then unreachable)
           (else return )
         )
