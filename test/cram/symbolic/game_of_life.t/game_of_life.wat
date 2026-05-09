@@ -265,8 +265,41 @@
     (i32.const 0)
   )
 
-  ;; 10. Existe deux vivantes côte à côte
-  (func $has_two_adjacent_alive (result i32) (i32.const 0))
+  ;; 10. Existe deux vivantes côte à côte (vertical ou horizontal)
+  (func $has_two_adjacent_alive (result i32)
+    (local $i i32)
+    (local $j i32)
+
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j
+        (if (call $is_alive (local.get $i) (local.get $j))
+          (then
+            ;; Voisin a droite
+            (if (i32.and
+                  (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (global.get $grid_width))
+                  (call $is_alive (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                )
+              (then (return (i32.const 1)))
+            )
+            ;; Voisin en bas
+            (if (i32.and
+                  (i32.lt_u (i32.add (local.get $i) (i32.const 1)) (global.get $grid_height))
+                  (call $is_alive (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                )
+              (then (return (i32.const 1)))
+            )
+          )
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.const 0)
+  )
 
   ;; 11. Existe un motif en "L" (3 cellules)
   (func $has_l_pattern (result i32) (i32.const 0))
