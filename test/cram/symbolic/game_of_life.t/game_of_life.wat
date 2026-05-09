@@ -254,7 +254,46 @@
   (func $has_l_pattern (result i32) (i32.const 0))
 
   ;; 12. Existe un motif carré 2*2
-  (func $has_square_pattern (result i32) (i32.const 0))
+  (func $has_square_pattern (result i32)
+    (local $i i32)
+    (local $j i32)
+
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j
+        ;; verifie qu'on ne depasse pas les limites de la grille
+        (if (i32.and
+              (i32.lt_u (i32.add (local.get $i) (i32.const 1)) (global.get $grid_height))
+              (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (global.get $grid_width))
+            )
+          (then
+            (if (i32.and
+                  (i32.and
+                    (call $is_alive (local.get $i) (local.get $j))
+                    (call $is_alive (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                  )
+                  (i32.and
+                    (call $is_alive (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                    (call $is_alive (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+                  )
+                )
+              ;; on a trouvé
+              (then (return (i32.const 1)))
+            )
+          )
+        )
+        ;; boucle sur j
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      ;; boucle sur i
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    ;; on a rien trouvé
+    (i32.const 0)
+  )
 
   ;; 13. Une cellule morte est devenue vivante
   (func $dead_to_alive_transition (result i32) (i32.const 0))
