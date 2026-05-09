@@ -302,7 +302,46 @@
   )
 
   ;; 11. Existe un motif en "L" (3 cellules)
-  (func $has_l_pattern (result i32) (i32.const 0))
+  (func $has_l_pattern (result i32)
+    (local $i i32)
+    (local $j i32)
+
+    ;; Un L 3 cellules -> un bloc 2x2 avec 3 cellules vivantes et 1 morte
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j
+        (if (i32.and
+              (i32.lt_u (i32.add (local.get $i) (i32.const 1)) (global.get $grid_height))
+              (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (global.get $grid_width))
+            )
+          (then
+            ;; On somme les 4 cellules du bloc 2x2
+            (if (i32.eq
+                  (i32.add
+                    (i32.add
+                      (call $is_alive (local.get $i) (local.get $j))
+                      (call $is_alive (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                    )
+                    (i32.add
+                      (call $is_alive (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                      (call $is_alive (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+                    )
+                  )
+                  (i32.const 3)
+                )
+              (then (return (i32.const 1)))
+            )
+          )
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.const 0)
+  )
 
   ;; 12. Existe un motif carré 2*2
   (func $has_square_pattern (result i32)
