@@ -245,7 +245,25 @@
   (func $has_isolated_cell (result i32) (i32.const 0))
 
   ;; 9. Existe une cellule entourée de vivantes
-  (func $has_surrounded_cell (result i32) (i32.const 0))
+  (func $has_surrounded_cell (result i32)
+    (local $i i32)
+    (local $j i32)
+
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j ;; si la cellule a 8 voisins vivants
+        (if (i32.eq (call $count_alive_neighbours (local.get $i) (local.get $j)) (i32.const 8))
+          (then (return (i32.const 1)))
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.const 0)
+  )
 
   ;; 10. Existe deux vivantes côte à côte
   (func $has_two_adjacent_alive (result i32) (i32.const 0))
