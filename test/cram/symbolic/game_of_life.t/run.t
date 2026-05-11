@@ -7236,3 +7236,6 @@ Test de la contrainte 14 (ligne ou colone en alternance)
 
 Test de la contrainte 15 (motif clignotant)
     $ printf "3\n3\n15\n0\n0\n0\n0\n0\n0\n0" | ono symbolic game_of_life.wat
+
+Test de la contrainte 16 (n vivante diagonale)
+    $ printf "3\n3\n16\n0\n0\n0\n0\n0\n0\n2" | ono symbolic game_of_life.wat

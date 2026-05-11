@@ -600,8 +600,32 @@
   )
 
   ;; 16. Diagonale vivante de N cellules
-  (func $has_diagonal_n (param $n i32) (result i32) (i32.const 0))
-
+  (func $has_diagonal_n (param $n i32) (result i32)
+    (local $i i32) (local $j i32) (local $k i32) (local $valid i32)
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j
+        (local.set $k (i32.const 0))
+        (local.set $valid (i32.const 1))
+        (loop $loop_k
+          (if (i32.or (i32.ge_u (i32.add (local.get $i) (local.get $k)) (global.get $grid_height))
+              (i32.or (i32.ge_u (i32.add (local.get $j) (local.get $k)) (global.get $grid_width))
+                      (i32.eqz (call $is_alive (i32.add (local.get $i) (local.get $k)) (i32.add (local.get $j) (local.get $k))))))
+            (then (local.set $valid (i32.const 0)))
+          )
+          (local.set $k (i32.add (local.get $k) (i32.const 1)))
+          (br_if $loop_k (i32.lt_u (local.get $k) (local.get $n)))
+        )
+        (if (local.get $valid) (then (return (i32.const 1))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.const 0)
+  )
 
   ;; Gros match permetant de selectionner la bonne contrainte
   (func $select_constraint (param $num_constraint i32) (param $x i32) (param $y i32) (param $x_prime i32) (param $y_prime i32) (param $n i32) (result i32)
