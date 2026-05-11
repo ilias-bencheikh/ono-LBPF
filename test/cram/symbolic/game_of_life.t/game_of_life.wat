@@ -328,16 +328,145 @@
   )
 
   ;; 9. Existe une cellule entourée de vivantes
-  (func $has_surrounded_cell (result i32) (i32.const 0))
+  (func $has_surrounded_cell (result i32)
+    (local $i i32)
+    (local $j i32)
 
-  ;; 10. Existe deux vivantes côte à côte
-  (func $has_two_adjacent_alive (result i32) (i32.const 0))
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j ;; si la cellule a 8 voisins vivants
+        (if (i32.eq (call $count_alive_neighbours (local.get $i) (local.get $j)) (i32.const 8))
+          (then (return (i32.const 1)))
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.const 0)
+  )
+
+  ;; 10. Existe deux vivantes côte à côte (vertical ou horizontal)
+  (func $has_two_adjacent_alive (result i32)
+    (local $i i32)
+    (local $j i32)
+
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j
+        (if (call $is_alive (local.get $i) (local.get $j))
+          (then
+            ;; Voisin a droite
+            (if (i32.and
+                  (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (global.get $grid_width))
+                  (call $is_alive (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                )
+              (then (return (i32.const 1)))
+            )
+            ;; Voisin en bas
+            (if (i32.and
+                  (i32.lt_u (i32.add (local.get $i) (i32.const 1)) (global.get $grid_height))
+                  (call $is_alive (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                )
+              (then (return (i32.const 1)))
+            )
+          )
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.const 0)
+  )
 
   ;; 11. Existe un motif en "L" (3 cellules)
-  (func $has_l_pattern (result i32) (i32.const 0))
+  (func $has_l_pattern (result i32)
+    (local $i i32)
+    (local $j i32)
+
+    ;; Un L 3 cellules -> un bloc 2x2 avec 3 cellules vivantes et 1 morte
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j
+        (if (i32.and
+              (i32.lt_u (i32.add (local.get $i) (i32.const 1)) (global.get $grid_height))
+              (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (global.get $grid_width))
+            )
+          (then
+            ;; On somme les 4 cellules du bloc 2x2
+            (if (i32.eq
+                  (i32.add
+                    (i32.add
+                      (call $is_alive (local.get $i) (local.get $j))
+                      (call $is_alive (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                    )
+                    (i32.add
+                      (call $is_alive (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                      (call $is_alive (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+                    )
+                  )
+                  (i32.const 3)
+                )
+              (then (return (i32.const 1)))
+            )
+          )
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.const 0)
+  )
 
   ;; 12. Existe un motif carré 2*2
-  (func $has_square_pattern (result i32) (i32.const 0))
+  (func $has_square_pattern (result i32)
+    (local $i i32)
+    (local $j i32)
+
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j
+        ;; verifie qu'on ne depasse pas les limites de la grille
+        (if (i32.and
+              (i32.lt_u (i32.add (local.get $i) (i32.const 1)) (global.get $grid_height))
+              (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (global.get $grid_width))
+            )
+          (then
+            (if (i32.and
+                  (i32.and
+                    (call $is_alive (local.get $i) (local.get $j))
+                    (call $is_alive (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+                  )
+                  (i32.and
+                    (call $is_alive (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+                    (call $is_alive (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))
+                  )
+                )
+              ;; on a trouvé
+              (then (return (i32.const 1)))
+            )
+          )
+        )
+        ;; boucle sur j
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      ;; boucle sur i
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    ;; on a rien trouvé
+    (i32.const 0)
+  )
 
   ;; 13. Une cellule morte est devenue vivante
   (func $dead_to_alive_transition (result i32) (i32.const 0))
