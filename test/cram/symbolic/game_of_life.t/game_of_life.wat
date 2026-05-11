@@ -549,7 +549,55 @@
   )
 
   ;; 15. Motif clignotant (oscillateur période 2)
-  (func $has_blinker_pattern (result i32) (i32.const 0))
+  (func $has_blinker_pattern (result i32)
+    (local $i i32) (local $j i32)
+    (local $sum i32) (local $center_line i32)
+
+    (local.set $i (i32.const 1))
+    (loop $loop_i
+      (local.set $j (i32.const 1))
+      (loop $loop_j
+
+        (local.set $sum (i32.const 0))
+        ;; ligne du haut
+        (local.set $sum (i32.add (local.get $sum) (call $is_alive (i32.sub (local.get $i) (i32.const 1)) (i32.sub (local.get $j) (i32.const 1)))))
+        (local.set $sum (i32.add (local.get $sum) (call $is_alive (i32.sub (local.get $i) (i32.const 1)) (local.get $j))))
+        (local.set $sum (i32.add (local.get $sum) (call $is_alive (i32.sub (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))))
+        ;; ligne du milieu
+        (local.set $sum (i32.add (local.get $sum) (call $is_alive (local.get $i) (i32.sub (local.get $j) (i32.const 1)))))
+        (local.set $sum (i32.add (local.get $sum) (call $is_alive (local.get $i) (local.get $j))))
+        (local.set $sum (i32.add (local.get $sum) (call $is_alive (local.get $i) (i32.add (local.get $j) (i32.const 1)))))
+        ;; ligne du bas
+        (local.set $sum (i32.add (local.get $sum) (call $is_alive (i32.add (local.get $i) (i32.const 1)) (i32.sub (local.get $j) (i32.const 1)))))
+        (local.set $sum (i32.add (local.get $sum) (call $is_alive (i32.add (local.get $i) (i32.const 1)) (local.get $j))))
+        (local.set $sum (i32.add (local.get $sum) (call $is_alive (i32.add (local.get $i) (i32.const 1)) (i32.add (local.get $j) (i32.const 1)))))
+
+        (if (i32.eq (local.get $sum) (i32.const 3))
+          (then
+            (local.set $center_line (i32.add
+              (i32.add (call $is_alive (local.get $i) (i32.sub (local.get $j) (i32.const 1)))
+                       (call $is_alive (local.get $i) (local.get $j)))
+              (call $is_alive (local.get $i) (i32.add (local.get $j) (i32.const 1)))
+            ))
+            (if (i32.eq (local.get $center_line) (i32.const 3)) (then (return (i32.const 1))))
+
+            (local.set $center_line (i32.add
+              (i32.add (call $is_alive (i32.sub (local.get $i) (i32.const 1)) (local.get $j))
+                       (call $is_alive (local.get $i) (local.get $j)))
+              (call $is_alive (i32.add (local.get $i) (i32.const 1)) (local.get $j))
+            ))
+            (if (i32.eq (local.get $center_line) (i32.const 3)) (then (return (i32.const 1))))
+          )
+        )
+
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (i32.sub (global.get $grid_width) (i32.const 1))))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (i32.sub (global.get $grid_height) (i32.const 1))))
+    )
+    (i32.const 0)
+  )
 
   ;; 16. Diagonale vivante de N cellules
   (func $has_diagonal_n (param $n i32) (result i32) (i32.const 0))

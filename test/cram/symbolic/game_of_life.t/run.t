@@ -7233,3 +7233,6 @@ Test de la contrainte 13 (Cellule morte qui devient vivante)
 
 Test de la contrainte 14 (ligne ou colone en alternance)
     $ printf "3\n3\n14\n0\n0\n0\n0\n0\n0\n0" | ono symbolic game_of_life.wat
+
+Test de la contrainte 15 (motif clignotant)
+    $ printf "3\n3\n15\n0\n0\n0\n0\n0\n0\n0" | ono symbolic game_of_life.wat
