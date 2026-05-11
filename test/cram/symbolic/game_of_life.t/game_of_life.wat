@@ -480,14 +480,12 @@
     (loop $loop_i
       (local.set $j (i32.const 0))
       (loop $loop_j
-        ;; Lire l'ancien état depuis la sauvegarde
         (local.set $initial_state
           (i32.load (i32.add (call $coords_to_index (local.get $i) (local.get $j)) (call $get_backup_offset)))
         )
         ;; Lire le nouvel état (tour 1)
         (local.set $new_state (call $is_alive (local.get $i) (local.get $j)))
 
-        ;; Si l'ancien = 0 (mort) ET le nouveau = 1 (vivant), on a réussi !
         (if (i32.and (i32.eqz (local.get $initial_state)) (i32.eq (local.get $new_state) (i32.const 1)))
           (then (return (i32.const 1)))
         )
@@ -502,7 +500,53 @@
   )
 
   ;; 14. Alternance vivante/morte sur ligne/colonne
-  (func $has_alternating_pattern (result i32) (i32.const 0))
+  (func $has_alternating_pattern (result i32)
+    (local $i i32) (local $j i32)
+    (local $is_alternating_row i32)
+    (local $is_alternating_col i32)
+
+    ;; 1. on cherche une ligne avec une alternance
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (local.set $is_alternating_row (i32.const 1))
+      (loop $loop_j
+        (if (i32.eq (call $is_alive (local.get $i) (local.get $j))
+                    (call $is_alive (local.get $i) (i32.add (local.get $j) (i32.const 1))))
+          (then (local.set $is_alternating_row (i32.const 0)))
+        )
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (i32.sub (global.get $grid_width) (i32.const 1))))
+      )
+      (if (i32.eq (local.get $is_alternating_row) (i32.const 1))
+        (then (return (i32.const 1)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+
+    ;; 2. si aucune ligne n'a marche on cherche une colone avec une alternance
+    (local.set $j (i32.const 0))
+    (loop $loop_col_j
+      (local.set $i (i32.const 0))
+      (local.set $is_alternating_col (i32.const 1))
+      (loop $loop_col_i
+        (if (i32.eq (call $is_alive (local.get $i) (local.get $j))
+                    (call $is_alive (i32.add (local.get $i) (i32.const 1)) (local.get $j)))
+          (then (local.set $is_alternating_col (i32.const 0)))
+        )
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $loop_col_i (i32.lt_u (local.get $i) (i32.sub (global.get $grid_height) (i32.const 1))))
+      )
+      (if (i32.eq (local.get $is_alternating_col) (i32.const 1))
+        (then (return (i32.const 1)))
+      )
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $loop_col_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+    )
+
+    (i32.const 0)
+  )
 
   ;; 15. Motif clignotant (oscillateur période 2)
   (func $has_blinker_pattern (result i32) (i32.const 0))

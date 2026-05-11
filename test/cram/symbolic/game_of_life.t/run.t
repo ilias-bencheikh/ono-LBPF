@@ -7230,3 +7230,6 @@ Test de la contrainte 13 (Cellule morte qui devient vivante)
   breadcrumbs 0 0 0 0 0 0 0 0 0 0 1 1 0 1 1 1 1 1 0 1 0 1 1 0 0 1 1 1
   ono: [ERROR] owi error: Reached problem!
   [123]
+
+Test de la contrainte 14 (ligne ou colone en alternance)
+    $ printf "3\n3\n14\n0\n0\n0\n0\n0\n0\n0" | ono symbolic game_of_life.wat
