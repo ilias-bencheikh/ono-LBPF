@@ -3,15 +3,9 @@
     (func $read_int (import "ono" "read_int") (result i32))
     (func $i32_symbol (import "ono" "i32_symbol") (result i32))
 
-
-<<<<<<< HEAD
-=======
-
     ;;Nombre des contraintes -1
     (global $nb_constraints i32 (i32.const 16))
 
-
->>>>>>> contrainte-leo
     ;; initialisation de la grille
     (global $grid_width (mut i32) (i32.const 5))
     (global $grid_height (mut i32) (i32.const 5))
@@ -43,6 +37,15 @@
         (i32.rem_u
         (i32.shr_u (local.get $index) (i32.const 2))
         (global.get $grid_width)
+        )
+    )
+
+    (func $get_backup_offset (result i32)
+        ;; Renvoie un décalage lointain en mémoire pour sauvegarder le tour 0
+        ;; Correspond à (largeur * hauteur * 8) bytes
+        (i32.shl
+            (i32.mul (global.get $grid_height) (global.get $grid_width))
+            (i32.const 3)
         )
     )
 
@@ -469,7 +472,34 @@
   )
 
   ;; 13. Une cellule morte est devenue vivante
-  (func $dead_to_alive_transition (result i32) (i32.const 0))
+  (func $dead_to_alive_transition (result i32)
+    (local $i i32) (local $j i32)
+    (local $initial_state i32)
+    (local $new_state i32)
+    (local.set $i (i32.const 0))
+    (loop $loop_i
+      (local.set $j (i32.const 0))
+      (loop $loop_j
+        ;; Lire l'ancien état depuis la sauvegarde
+        (local.set $initial_state
+          (i32.load (i32.add (call $coords_to_index (local.get $i) (local.get $j)) (call $get_backup_offset)))
+        )
+        ;; Lire le nouvel état (tour 1)
+        (local.set $new_state (call $is_alive (local.get $i) (local.get $j)))
+
+        ;; Si l'ancien = 0 (mort) ET le nouveau = 1 (vivant), on a réussi !
+        (if (i32.and (i32.eqz (local.get $initial_state)) (i32.eq (local.get $new_state) (i32.const 1)))
+          (then (return (i32.const 1)))
+        )
+
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+      )
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+    )
+    (i32.const 0)
+  )
 
   ;; 14. Alternance vivante/morte sur ligne/colonne
   (func $has_alternating_pattern (result i32) (i32.const 0))
@@ -575,6 +605,13 @@
                     (call $coords_to_index (local.get $i) (local.get $j))
                     (local.get $cell)
                 )
+                ;; --- SAUVEGARDE DU TOUR 0 ---
+                ;; On copie l'état de départ plus loin dans la mémoire
+                (i32.store
+                    (i32.add (call $coords_to_index (local.get $i) (local.get $j)) (call $get_backup_offset))
+                    (local.get $cell)
+                )
+                ;; ----------------------------
                 (local.set $j (i32.add (local.get $j) (i32.const 1)))
                 (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
             )
