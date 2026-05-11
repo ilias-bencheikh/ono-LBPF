@@ -7192,6 +7192,19 @@ Compute all the configurations of a 3x3 grid with the cell(2,2) dead after one s
   ono: [ERROR] owi error: Reached 352 problems!
   [123]
 
+Test de la contrainte 5 (ligne completement vivante)
+  $ printf "3\n3\n5\n1\n1\n1\n1\n1\n1\n1" | ono symbolic game_of_life.wat
+
+Test de la contrainte 6 (colone completement vivante)
+  $ printf "3\n3\n6\n1\n1\n1\n1\n1\n1\n1" | ono symbolic game_of_life.wat
+
+Test de la contrainte 7 ( n cellule vivante (2 dans ce cas) )
+  $ printf "3\n3\n7\n0\n0\n0\n0\n0\n0\n2" | ono symbolic game_of_life.wat
+
+Test de la contrainte 7 bis ( n cellule vivante (0 dans ce cas))
+    $ printf "3\n3\n7\n0\n0\n0\n0\n0\n0\n0" | ono symbolic game_of_life.wat
+
+
 Test de la contrainte 13 (Cellule morte qui devient vivante)
   $ printf "3\n3\n13\n0\n0\n0\n0\n0" | ono symbolic game_of_life.wat
   Entrer un entier:
