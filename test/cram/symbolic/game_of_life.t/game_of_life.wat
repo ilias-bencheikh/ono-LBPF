@@ -230,7 +230,7 @@
     (i32.eqz (i32.load (call $coords_to_index (local.get $i) (local.get $j))))
   )
   ;; 2. Au moins une vivante sur la grille
-  (func $at_least_one_alive_opt (result i32)
+  (func $at_least_one_alive (result i32)
     (local $offset i32)
     (local $max_offset i32)
     
