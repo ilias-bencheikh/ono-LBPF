@@ -599,25 +599,41 @@
     (i32.const 0)
   )
 
-  ;; 16. Diagonale vivante de N cellules
+  ;; 16. Diagonale vivante de N cellules (dans les deux sens)
   (func $has_diagonal_n (param $n i32) (result i32)
-    (local $i i32) (local $j i32) (local $k i32) (local $valid i32)
+    (local $i i32) (local $j i32) (local $k i32)
+    (local $valid_diag1 i32) (local $valid_diag2 i32)
+
     (local.set $i (i32.const 0))
     (loop $loop_i
       (local.set $j (i32.const 0))
       (loop $loop_j
+
         (local.set $k (i32.const 0))
-        (local.set $valid (i32.const 1))
+        (local.set $valid_diag1 (i32.const 1)) ;; Diagonale \ (Haut-Gauche vers Bas-Droite)
+        (local.set $valid_diag2 (i32.const 1)) ;; Diagonale / (Haut-Droite vers Bas-Gauche)
+
         (loop $loop_k
           (if (i32.or (i32.ge_u (i32.add (local.get $i) (local.get $k)) (global.get $grid_height))
               (i32.or (i32.ge_u (i32.add (local.get $j) (local.get $k)) (global.get $grid_width))
                       (i32.eqz (call $is_alive (i32.add (local.get $i) (local.get $k)) (i32.add (local.get $j) (local.get $k))))))
-            (then (local.set $valid (i32.const 0)))
+            (then (local.set $valid_diag1 (i32.const 0)))
           )
+
+          (if (i32.or (i32.ge_u (i32.add (local.get $i) (local.get $k)) (global.get $grid_height))
+              (i32.or (i32.lt_s (i32.sub (local.get $j) (local.get $k)) (i32.const 0)) ;; Attention, j-k peut être négatif, donc on utilise lt_s < 0
+                      (i32.eqz (call $is_alive (i32.add (local.get $i) (local.get $k)) (i32.sub (local.get $j) (local.get $k))))))
+            (then (local.set $valid_diag2 (i32.const 0)))
+          )
+
           (local.set $k (i32.add (local.get $k) (i32.const 1)))
           (br_if $loop_k (i32.lt_u (local.get $k) (local.get $n)))
         )
-        (if (local.get $valid) (then (return (i32.const 1))))
+
+        (if (i32.or (local.get $valid_diag1) (local.get $valid_diag2))
+          (then (return (i32.const 1)))
+        )
+
         (local.set $j (i32.add (local.get $j) (i32.const 1)))
         (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
       )
@@ -721,13 +737,11 @@
                     (call $coords_to_index (local.get $i) (local.get $j))
                     (local.get $cell)
                 )
-                ;; --- SAUVEGARDE DU TOUR 0 ---
-                ;; On copie l'état de départ plus loin dans la mémoire
+                ;; on copie l'état de départ pour sauvegarder la configuration initiale (pour la contrainte 13)
                 (i32.store
                     (i32.add (call $coords_to_index (local.get $i) (local.get $j)) (call $get_backup_offset))
                     (local.get $cell)
                 )
-                ;; ----------------------------
                 (local.set $j (i32.add (local.get $j) (i32.const 1)))
                 (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
             )
