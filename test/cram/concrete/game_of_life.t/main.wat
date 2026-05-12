@@ -67,30 +67,28 @@
     (global.set $max_steps (call $get_max_steps))
     (global.set $display_last (call $get_display_last))
     (local.set $i (i32.const 0))
-    (loop $loop_i
-      (local.set $j (i32.const 0))
-      (loop $loop_j
-        ;;On choisis la valeur de la cellule (0 ou 1)
-        (if (global.get $has_config) 
-            (then 
-              (local.set $cell (i32.const 0));; On initialise tout a 0 
-              )
-            (else
-              (local.set $cell(i32.and (call $random_i32) (i32.const 1))) ;; 0 ou 1 aléatoire 
-            )
-          )
-        (i32.store 
-          (call $coords_to_index (local.get $i) (local.get $j))
-          (local.get $cell)
-        )
-        (local.set $j (i32.add (local.get $j) (i32.const 1)))
-        (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
-      )
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
-    )
     (if (global.get $has_config)
-      (then (call $load_config))
+      (then
+      ;;(memory $mem 1) initialise la memoire a zero
+        (call $load_config)
+      )
+      (else
+        (loop $loop_i
+          (local.set $j (i32.const 0))
+          (loop $loop_j
+            ;;On choisis la valeur de la cellule (0 ou 1)
+            (local.set $cell (i32.and (call $random_i32) (i32.const 1))) ;; 0 ou 1 aléatoire 
+            (i32.store 
+              (call $coords_to_index (local.get $i) (local.get $j))
+              (local.get $cell)
+            )
+            (local.set $j (i32.add (local.get $j) (i32.const 1)))
+            (br_if $loop_j (i32.lt_u (local.get $j) (global.get $grid_width)))
+          )
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $loop_i (i32.lt_u (local.get $i) (global.get $grid_height)))
+        )
+      )
     )
   )
 

@@ -1,2 +1,6 @@
 (cram
- (deps %{bin:ono}))
+ (deps 
+  %{bin:ono}
+  (source_tree ../../config)
+ )
+)

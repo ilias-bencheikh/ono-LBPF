@@ -230,13 +230,78 @@
     (i32.eqz (i32.load (call $coords_to_index (local.get $i) (local.get $j))))
   )
   ;; 2. Au moins une vivante sur la grille
-  (func $at_least_one_alive (result i32) (i32.const 0))
+  (func $at_least_one_alive (result i32)
+    (local $offset i32)
+    (local $max_offset i32)
+    
+    (local.set $max_offset
+      (i32.shl
+        (i32.mul (global.get $grid_width) (global.get $grid_height))
+        (i32.const 2) 
+      )
+    )
+    (local.set $offset (i32.const 0))
+    (loop $loop_mem
+      (if (i32.load (local.get $offset))
+        (then
+          (return (i32.const 1))
+        )
+      )
+      (local.set $offset (i32.add (local.get $offset) (i32.const 4)))
 
+      (br_if $loop_mem (i32.lt_u (local.get $offset) (local.get $max_offset)))
+    )
+    (i32.const 0)
+  )
   ;; 3. Toutes les cellules sont vivantes
-  (func $all_alive (result i32) (i32.const 0))
+  (func $all_alive (result i32) 
+    (local $offset i32)
+    (local $max_offset i32)
+    
+    (local.set $max_offset
+      (i32.shl
+        (i32.mul (global.get $grid_width) (global.get $grid_height))
+        (i32.const 2) 
+      )
+    )
+    (local.set $offset (i32.const 0))
+    (loop $loop_mem
+      (if (i32.eqz (i32.load (local.get $offset)))
+        (then
+          (return (i32.const 0))
+        )
+      )
+      (local.set $offset (i32.add (local.get $offset) (i32.const 4)))
+
+      (br_if $loop_mem (i32.lt_u (local.get $offset) (local.get $max_offset)))
+    )
+    (i32.const 1)
+  )
 
   ;; 4. Toutes les cellules sont mortes
-  (func $all_dead (result i32) (i32.const 0))
+  (func $all_dead (result i32) 
+    (local $offset i32)
+    (local $max_offset i32)
+    
+    (local.set $max_offset
+      (i32.shl
+        (i32.mul (global.get $grid_width) (global.get $grid_height))
+        (i32.const 2) 
+      )
+    )
+    (local.set $offset (i32.const 0))
+    (loop $loop_mem
+      (if (i32.load (local.get $offset))
+        (then
+          (return (i32.const 0))
+        )
+      )
+      (local.set $offset (i32.add (local.get $offset) (i32.const 4)))
+
+      (br_if $loop_mem (i32.lt_u (local.get $offset) (local.get $max_offset)))
+    )
+    (i32.const 1)
+  )
 
   ;; 5. Ligne complète entre (x, y) et (x', y)
   (func $full_line (param $x i32) (param $y i32) (param $x_prime i32) (result i32)
