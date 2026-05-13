@@ -135,6 +135,8 @@ let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
 
   input_loop ()
 
+let is_paused = ref false
+
 let clear_screen () : (unit, _) Result.t =
   if !window_opened && window_should_close () then
     Error (`Msg "window closed by user")
@@ -147,11 +149,31 @@ let clear_screen () : (unit, _) Result.t =
         List.fold_left (fun acc row -> max acc (List.length row)) 0 rows
       in
       let* cell_size = initialize_window ~cols ~rows:(List.length rows) in
-      begin_drawing ();
-      clear_background Color.raywhite;
-      draw_rows ~cell_size rows;
-      end_drawing ();
-      Ok ()
+
+      let rec render_and_wait () =
+        if window_should_close () then Error (`Msg "window closed by user")
+        else (
+          if is_key_pressed Key.Space then is_paused := not !is_paused;
+          let step = is_key_pressed Key.Right in
+
+          begin_drawing ();
+          clear_background Color.raywhite;
+          draw_rows ~cell_size rows;
+
+          if !is_paused then (
+            draw_rectangle 0 0 450 30 Color.black;
+            draw_text "PAUSE - [Espace]: Reprendre  [Fleche Droite]: Avancer" 10
+              7 16 Color.white);
+
+          end_drawing ();
+
+          if step then (
+            is_paused := true;
+            Ok ())
+          else if not !is_paused then Ok ()
+          else render_and_wait ())
+      in
+      render_and_wait ()
 
 let m =
   Concrete_ono_common.module_of_backend
