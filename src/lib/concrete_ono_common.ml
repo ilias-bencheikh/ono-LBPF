@@ -5,6 +5,7 @@ type 'err display_backend = {
   print_cell : Kdo.Concrete.I32.t -> (unit, 'err) Result.t;
   newline : unit -> (unit, 'err) Result.t;
   clear_screen : unit -> (unit, 'err) Result.t;
+  read_int : unit -> (Kdo.Concrete.I32.t, 'err) Result.t;
 }
 
 (* Variable pour savoir si la grid est generee par un fichier de configuration *)
@@ -138,13 +139,6 @@ let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
   Unix.sleepf seconds;
   Ok ()
 
-let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
-  try
-    print_endline "Entrer un entier:";
-    let line = read_line () in
-    let value = Int32.of_string line in
-    Ok (Kdo.Concrete.I32.of_int32 value)
-  with _ -> Error (`Msg "Invalid input: expected an integer")
 
 let module_of_backend (display : Owi.Result.err display_backend) =
   let open Kdo.Concrete.Extern_func in
@@ -158,7 +152,7 @@ let module_of_backend (display : Owi.Result.err display_backend) =
       ("print_cell", Extern_func (i32 ^->. unit, display.print_cell));
       ("newline", Extern_func (unit ^->. unit, display.newline));
       ("clear_screen", Extern_func (unit ^->. unit, display.clear_screen));
-      ("read_int", Extern_func (unit ^->. i32, read_int));
+      ("read_int", Extern_func (unit ^->. i32, display.read_int));
       ("get_max_steps", Extern_func (unit ^->. i32, get_max_steps));
       ("get_display_last", Extern_func (unit ^->. i32, get_display_last));
       ("has_config", Extern_func (unit ^->. i32, has_config));

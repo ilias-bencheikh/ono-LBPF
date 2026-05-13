@@ -38,8 +38,10 @@ let initialize_window ~cols ~rows =
   let new_w = cols * cell_size in
   let new_h = rows * cell_size in
 
-  if not !window_opened then (
-    close_if_opened ();
+  if !window_opened then (
+    set_window_title "Game of Life";
+    set_window_size new_w new_h)
+  else (
     init_window new_w new_h "Game of Life";
     set_target_fps 60;
     window_opened := true);
@@ -65,6 +67,74 @@ let draw_rows ~cell_size rows =
         row)
     rows
 
+let draw_input_box prompt input_text frames =
+  begin_drawing ();
+  clear_background Color.raywhite;
+
+  draw_text prompt 50 80 28 Color.black;
+  draw_rectangle 50 140 500 50 Color.lightgray;
+  draw_rectangle_lines 50 140 500 50 Color.darkgray;
+  draw_text input_text 60 150 32 Color.black;
+
+  (* dessin du curseur clignotant *)
+  (if frames / 15 mod 2 = 0 then
+     let cursor_x = 60 + (String.length input_text * 18) in
+     draw_line cursor_x 155 cursor_x 175 Color.black);
+
+  draw_text "ENTRER pour valider" 50 220 18 Color.black;
+
+  end_drawing ()
+
+let ensure_window_open () =
+  if not !window_opened then (
+    close_if_opened ();
+    init_window 600 300 "Entrer un entier";
+    set_target_fps 60;
+    window_opened := true)
+
+let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
+  let prompt = "Entrer un entier:" in
+  ensure_window_open ();
+
+  let input_text = ref "" in
+  let frames = ref 0 in
+
+  let rec input_loop () =
+    if window_should_close () then Error (`Msg "window closed by user")
+    else (
+      incr frames;
+
+      (* read de l'entrée *)
+      let rec process_chars () =
+        let key = Uchar.to_int (get_char_pressed ()) in
+        if key <> 0 then (
+          if key >= 48 && key <= 57 && String.length !input_text < 20 then
+            input_text := !input_text ^ String.make 1 (Char.chr key);
+          process_chars ())
+      in
+      process_chars ();
+
+      (* gère le backspace *)
+      if is_key_pressed Key.Backspace && String.length !input_text > 0 then
+        input_text := String.sub !input_text 0 (String.length !input_text - 1);
+
+      (* gère les 2 touches Enter *)
+      if
+        (is_key_pressed Key.Enter || is_key_pressed Key.Kp_enter)
+        && String.length !input_text > 0
+      then
+        try
+          let value = Int32.of_string !input_text in
+          draw_input_box prompt !input_text !frames;
+          Ok (Kdo.Concrete.I32.of_int32 value)
+        with _ -> Error (`Msg "Invalid input: expected an integer")
+      else (
+        draw_input_box prompt !input_text !frames;
+        input_loop ()))
+  in
+
+  input_loop ()
+
 let clear_screen () : (unit, _) Result.t =
   if !window_opened && window_should_close () then
     Error (`Msg "window closed by user")
@@ -84,4 +154,5 @@ let clear_screen () : (unit, _) Result.t =
       Ok ()
 
 let m =
-  Concrete_ono_common.module_of_backend { print_cell; newline; clear_screen }
+  Concrete_ono_common.module_of_backend
+    { print_cell; newline; clear_screen; read_int }
