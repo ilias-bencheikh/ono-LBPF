@@ -21,6 +21,11 @@
 - implémentation de l'option --steps
 - implémentation de l'option --last
 
+# Interface Graphique
+- implémentation de l'interface graphique avec raylib qui contient les fonctions qui ne sont pas en commun avec l'interface textuelle (print_cell, newline, clear_screen, read_int)
+- mettre le jeu en pause avec la touche espace
+- avancer d'une seule génération avec la flèche droite
+
 # Exécution Symbolique
 
 - préliminaire (polynome.wat)
