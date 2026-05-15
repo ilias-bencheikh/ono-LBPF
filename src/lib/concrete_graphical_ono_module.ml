@@ -135,7 +135,7 @@ let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
 
   input_loop ()
 
-let is_paused = ref false
+let is_paused = ref true
 
 let clear_screen () : (unit, _) Result.t =
   if !window_opened && window_should_close () then
