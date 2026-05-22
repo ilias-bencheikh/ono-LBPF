@@ -74,11 +74,12 @@ let source_file =
   Arg.(
     required & pos 0 (some existing_file_conv) None (info [] ~doc ~docv:"FILE"))
 
-let config_file = 
-  let doc = "Specify a file to initialize grid dimensions and live cells." in 
-  Arg. (
-    value & opt (some existing_file_conv) None (info ["c";"config"] ~doc ~docv:"CONFIG FILE")
-  )
+let config_file =
+  let doc = "Specify a file to initialize grid dimensions and live cells." in
+  Arg.(
+    value
+    & opt (some existing_file_conv) None
+        (info [ "c"; "config" ] ~doc ~docv:"CONFIG FILE"))
 
 let seed =
   let doc =
@@ -96,19 +97,19 @@ let steps =
 
 let last =
   let doc =
-    "Displays only the last N configurations when used with --steps. If omitted \
-     or if --steps is not provided, configurations are printed normally."
+    "Displays only the last N configurations when used with --steps. If \
+     omitted or if --steps is not provided, configurations are printed \
+     normally."
   in
   Arg.(value & opt (some int) None (info [ "last" ] ~doc))
 
 let use_graphical_window =
-  let doc =
-    "Use the graphical raylib backend."
-  in
+  let doc = "Use the graphical raylib backend." in
   Arg.(value & flag (info [ "use-graphical-window" ] ~doc))
 
 let no_stop_at_failure =
   let doc =
-    "Continue symbolic exploration after a failure instead of stopping at the first one."
+    "Continue symbolic exploration after a failure instead of stopping at the \
+     first one."
   in
   Arg.(value & flag (info [ "no-stop-at-failure" ] ~doc))
