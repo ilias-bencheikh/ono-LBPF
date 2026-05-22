@@ -13,8 +13,7 @@ let term =
   and+ my_seed = seed
   and+ my_steps = steps
   and+ my_last = last
-  and+ use_graphical_window = use_graphical_window
-  in
+  and+ use_graphical_window = use_graphical_window in
 
   (* On initialise le generateur avant de run le fichier .wat *)
   let () =

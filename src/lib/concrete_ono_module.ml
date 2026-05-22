@@ -29,6 +29,7 @@ let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
     let value = Int32.of_string line in
     Ok (Kdo.Concrete.I32.of_int32 value)
   with _ -> Error (`Msg "Invalid input: expected an integer")
+
 let m =
   Concrete_ono_common.module_of_backend
     { print_cell; newline; clear_screen; read_int }
