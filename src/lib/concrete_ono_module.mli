@@ -1,3 +1,4 @@
+(** Tampon d'affichage pour les sorties terminal standard. *)
 val display_buffer : Buffer.t
 (** Buffer d'affichage pour les sorties terminal. *)
 

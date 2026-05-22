@@ -1,6 +1,7 @@
 type configuration = { width : int; height : int; cells : (int * int) list }
 (** Structure définissant la configuration d'une grille . *)
 
+(** Définition d'un backend d'affichage générique permettant de substituer le terminal à la fenêtre graphique. *)
 type 'err display_backend = {
   print_cell : Owi.Concrete_i32.t -> (unit, 'err) result;
   newline : unit -> (unit, 'err) result;
@@ -11,6 +12,7 @@ type 'err display_backend = {
 (** Définition d'un backend d'affichage générique permettant de substituer le
     terminal à la fenêtre graphique. *)
 
+(** Indique si le programme a été lancé avec une configuration personnalisée. *)
 val with_config : bool ref
 (** Boolean indiquant si le programme a été lancé avec une configuration. *)
 
@@ -70,6 +72,7 @@ val sleep : Owi.Concrete_f32.t -> (unit, 'a) result
 (** Met l'exécution en pause pendant un certain nombre de secondes (flottant 32
     bits). *)
 
+(** Construit un module d'interface externe (Extern.Module) à partir du backend d'affichage choisi. *)
 val module_of_backend :
   Owi.Result.err display_backend ->
   Owi.Concrete_extern_func.extern_func Owi.Extern.Module.t

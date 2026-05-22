@@ -1,3 +1,4 @@
+(** Opérateur de liaison monadique (bind) pour composer les résultats de type (Result.t). *)
 val ( let* ) : ('a, 'b) result -> ('a -> ('c, 'b) result) -> ('c, 'b) result
 (** Opérateur de liaison monadique (bind) pour composer les résultats de type
     (Result.t). *)
