@@ -137,6 +137,36 @@ let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
 
 let is_paused = ref true
 
+let draw_current_state rows =
+  clear_background Color.raywhite;
+  if rows <> [] then (
+    let cols = List.fold_left (fun acc row -> max acc (List.length row)) 0 rows in
+    let cell_size = calculate_cell_size ~cols ~rows:(List.length rows) in
+    draw_rows ~cell_size rows
+  )
+
+let render_pause_menu () =
+  draw_rectangle 0 0 450 30 Color.black;
+  draw_text "PAUSE - [Espace]: Reprendre  [Fleche Droite]: Avancer" 10
+    7 16 Color.white
+
+let rec render_and_wait rows =
+  if window_should_close () then Error (`Msg "window closed by user")
+  else (
+    if is_key_pressed Key.Space then is_paused := not !is_paused;
+    let step = is_key_pressed Key.Right in
+
+    begin_drawing ();
+    draw_current_state rows;
+    if !is_paused then render_pause_menu ();
+    end_drawing ();
+
+    if step then (
+      is_paused := true;
+      Ok ())
+    else if not !is_paused then Ok ()
+    else render_and_wait rows)
+
 let clear_screen () : (unit, _) Result.t =
   if !window_opened && window_should_close () then
     Error (`Msg "window closed by user")
@@ -148,33 +178,39 @@ let clear_screen () : (unit, _) Result.t =
       let cols =
         List.fold_left (fun acc row -> max acc (List.length row)) 0 rows
       in
-      let* cell_size = initialize_window ~cols ~rows:(List.length rows) in
+      let* _cell_size = initialize_window ~cols ~rows:(List.length rows) in
+      render_and_wait rows
 
-      let rec render_and_wait () =
-        if window_should_close () then Error (`Msg "window closed by user")
-        else (
-          if is_key_pressed Key.Space then is_paused := not !is_paused;
-          let step = is_key_pressed Key.Right in
-
-          begin_drawing ();
-          clear_background Color.raywhite;
-          draw_rows ~cell_size rows;
-
-          if !is_paused then (
-            draw_rectangle 0 0 450 30 Color.black;
-            draw_text "PAUSE - [Espace]: Reprendre  [Fleche Droite]: Avancer" 10
-              7 16 Color.white);
-
-          end_drawing ();
-
-          if step then (
-            is_paused := true;
-            Ok ())
-          else if not !is_paused then Ok ()
-          else render_and_wait ())
-      in
-      render_and_wait ()
+let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
+  let ms = Kdo.Concrete.F32.to_float milliseconds in
+  let seconds = ms /. 1000.0 in
+  
+  if not !window_opened then (
+    Unix.sleepf seconds;
+    Ok ()
+  ) else (
+    let start_time = get_time () in
+    let rows = rows_of_frame_buffer () in
+    let rec wait_loop () =
+      if window_should_close () then Error (`Msg "window closed by user")
+      else if !is_paused then
+        let* () = render_and_wait rows in
+        Ok ()
+      else if get_time () -. start_time >= seconds then Ok ()
+      else (
+        if is_key_pressed Key.Space then is_paused := not !is_paused;
+        
+        begin_drawing ();
+        draw_current_state rows;
+        if !is_paused then render_pause_menu ();
+        end_drawing ();
+        
+        wait_loop ()
+      )
+    in
+    wait_loop ()
+  )
 
 let m =
   Concrete_ono_common.module_of_backend
-    { print_cell; newline; clear_screen; read_int }
+    { print_cell; newline; clear_screen; read_int; sleep }
