@@ -6,6 +6,7 @@ type 'err display_backend = {
   newline : unit -> (unit, 'err) result;
   clear_screen : unit -> (unit, 'err) result;
   read_int : unit -> (Owi.Concrete_i32.t, 'err) result;
+  sleep : Owi.Concrete_f32.t -> (unit, 'err) result;
 }
 (** Définition d'un backend d'affichage générique permettant de substituer le
     terminal à la fenêtre graphique. *)

@@ -30,6 +30,12 @@ let read_int (_ : unit) : (Kdo.Concrete.I32.t, _) Result.t =
     Ok (Kdo.Concrete.I32.of_int32 value)
   with _ -> Error (`Msg "Invalid input: expected an integer")
 
+let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
+  let ms = Kdo.Concrete.F32.to_float milliseconds in
+  let seconds = ms /. 1000.0 in
+  Unix.sleepf seconds;
+  Ok ()
+
 let m =
   Concrete_ono_common.module_of_backend
-    { print_cell; newline; clear_screen; read_int }
+    { print_cell; newline; clear_screen; read_int; sleep }
