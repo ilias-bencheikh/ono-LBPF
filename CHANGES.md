@@ -37,3 +37,4 @@ Changed
 Fixed
 - Correction des options --steps / --last
 - Correction du bouton pause
+- Correction de l'affichage de la fenetre au demarage (taille )

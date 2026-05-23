@@ -139,16 +139,17 @@ let is_paused = ref true
 
 let draw_current_state rows =
   clear_background Color.raywhite;
-  if rows <> [] then (
-    let cols = List.fold_left (fun acc row -> max acc (List.length row)) 0 rows in
+  if rows <> [] then
+    let cols =
+      List.fold_left (fun acc row -> max acc (List.length row)) 0 rows
+    in
     let cell_size = calculate_cell_size ~cols ~rows:(List.length rows) in
     draw_rows ~cell_size rows
-  )
 
 let render_pause_menu () =
   draw_rectangle 0 0 450 30 Color.black;
-  draw_text "PAUSE - [Espace]: Reprendre  [Fleche Droite]: Avancer" 10
-    7 16 Color.white
+  draw_text "PAUSE - [Espace]: Reprendre  [Fleche Droite]: Avancer" 10 7 16
+    Color.white
 
 let rec render_and_wait rows =
   if window_should_close () then Error (`Msg "window closed by user")
@@ -187,16 +188,17 @@ let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
 
   if not !window_opened then (
     Unix.sleepf seconds;
-    Ok ()
-  ) else (
+    Ok ())
+  else
     let start_time = get_time () in
     let rows = rows_of_frame_buffer () in
 
-    if rows <> [] then (
-      let cols = List.fold_left (fun acc row -> max acc (List.length row)) 0 rows in
-      let _ = initialize_window ~cols ~rows:(List.length rows) in
-      ()
-    );
+    (if rows <> [] then
+       let cols =
+         List.fold_left (fun acc row -> max acc (List.length row)) 0 rows
+       in
+       let _ = initialize_window ~cols ~rows:(List.length rows) in
+       ());
 
     let rec wait_loop () =
       if window_should_close () then Error (`Msg "window closed by user")
@@ -212,11 +214,9 @@ let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
         if !is_paused then render_pause_menu ();
         end_drawing ();
 
-        wait_loop ()
-      )
+        wait_loop ())
     in
     wait_loop ()
-  )
 
 let m =
   Concrete_ono_common.module_of_backend
