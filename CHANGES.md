@@ -38,3 +38,8 @@ Fixed
 - Correction des options --steps / --last
 - Correction du bouton pause
 - Correction de l'affichage de la fenetre au demarage (taille )
+
+[v1.0.2] - Soon
+
+Fixed
+- plus de problème d'out of bound (la mémoire est allouée au début en fonction de la taille de la grille)
