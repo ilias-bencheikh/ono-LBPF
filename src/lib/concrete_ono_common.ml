@@ -6,6 +6,7 @@ type 'err display_backend = {
   newline : unit -> (unit, 'err) Result.t;
   clear_screen : unit -> (unit, 'err) Result.t;
   read_int : unit -> (Kdo.Concrete.I32.t, 'err) Result.t;
+  sleep : Kdo.Concrete.F32.t -> (unit, 'err) Result.t;
 }
 
 (* Variable pour savoir si la grid est generee par un fichier de configuration *)
@@ -139,7 +140,6 @@ let sleep (milliseconds : Kdo.Concrete.F32.t) : (unit, _) Result.t =
   Unix.sleepf seconds;
   Ok ()
 
-
 let module_of_backend (display : Owi.Result.err display_backend) =
   let open Kdo.Concrete.Extern_func in
   let open Kdo.Concrete.Extern_func.Syntax in
@@ -148,7 +148,7 @@ let module_of_backend (display : Owi.Result.err display_backend) =
       ("print_i32", Extern_func (i32 ^->. unit, print_i32));
       ("print_i64", Extern_func (i64 ^->. unit, print_i64));
       ("random_i32", Extern_func (unit ^->. i32, random_i32));
-      ("sleep", Extern_func (f32 ^->. unit, sleep));
+      ("sleep", Extern_func (f32 ^->. unit, display.sleep));
       ("print_cell", Extern_func (i32 ^->. unit, display.print_cell));
       ("newline", Extern_func (unit ^->. unit, display.newline));
       ("clear_screen", Extern_func (unit ^->. unit, display.clear_screen));

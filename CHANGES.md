@@ -25,3 +25,15 @@
 
 - préliminaire (polynome.wat)
 - implémentation du générateur de configurations (game_of_life.wat)
+
+[v1.0.1] - [2025-05-23]
+
+Added
+- Ajout des .mli
+- Ajout des commentaires de documentation (odoc)
+Changed
+- Formattage du code
+- Suppression des fichiers inutiles
+Fixed
+- Correction des options --steps / --last
+- Correction du bouton pause
