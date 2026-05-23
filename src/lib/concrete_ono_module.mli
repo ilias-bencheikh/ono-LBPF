@@ -1,17 +1,17 @@
-(** Buffer d'affichage pour les sorties terminal. *)
 val display_buffer : Buffer.t
+(** Buffer d'affichage pour les sorties terminal. *)
 
-(** Affiche l'état d'une cellule dans le terminal. *)
 val print_cell : Owi.Concrete_i32.t -> (unit, 'a) result
+(** Affiche l'état d'une cellule dans le terminal. *)
 
-(** Ajoute un saut de ligne à l'affichage du terminal. *)
 val newline : unit -> (unit, 'a) result
+(** Ajoute un saut de ligne à l'affichage du terminal. *)
 
-(** Efface le contenu de l'écran du terminal. *)
 val clear_screen : unit -> (unit, 'a) result
+(** Efface le contenu de l'écran du terminal. *)
 
-(** Lit un entier depuis l'entrée standard du terminal. *)
 val read_int : unit -> (Owi.Concrete_i32.t, [> `Msg of string ]) result
+(** Lit un entier depuis l'entrée standard du terminal. *)
 
-(** Module externe terminal (fonctions concrètes). *)
 val m : Owi.Concrete_extern_func.extern_func Owi.Extern.Module.t
+(** Module externe terminal (fonctions concrètes). *)
