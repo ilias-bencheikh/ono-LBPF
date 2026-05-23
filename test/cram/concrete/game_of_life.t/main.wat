@@ -122,6 +122,34 @@
     (global.set $grid_height (call $read_int))
   )
 
+  (func $resize_memory
+    (local $needed_pages i32)
+
+    ;; on a besoin de ceil((grid_width * grid_height * 4 * 2) / 65536) pages
+    ;; (4 octets par cellule et 2 grilles en mémoire, une page fait 65536 octets)
+    (local.set $needed_pages
+      (i32.div_u
+        (i32.add ;; ceil
+          (i32.mul
+            (i32.mul (global.get $grid_width) (global.get $grid_height))
+            (i32.const 8)
+          )
+          (i32.const 65535)
+        )
+        (i32.const 65536)
+      )
+    )
+
+    ;; On augmente la memoire si necessaire
+    (if (i32.gt_u (local.get $needed_pages) (memory.size))
+      (then
+        ;; On alloue le delta 
+        ;; et ignore la valeur de retour (ancienne taille)
+        (drop (memory.grow (i32.sub (local.get $needed_pages) (memory.size))))
+      )
+    )
+  )
+
   ;; fonctions de logique du jeu
 
    (func $is_alive (param $i i32) (param $j i32) (result i32)
@@ -367,6 +395,7 @@
         (call $read_dimensions)
       )
     )
+    (call $resize_memory)
     (call $init_grid)
     (call $loop)
     
