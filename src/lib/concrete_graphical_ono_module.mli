@@ -1,4 +1,4 @@
-(** Tampon (buffer) utilisé pour les traitements internes liés à l'affichage. *)
+(** Buffer utilisé pour les traitements liés à l'affichage. *)
 val frame_buffer : Buffer.t
 (** Buffer utilisé pour les traitements liés à l'affichage. *)
 
