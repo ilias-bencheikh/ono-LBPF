@@ -125,13 +125,16 @@
   (func $resize_memory
     (local $needed_pages i32)
 
-    ;; on a besoin de (grid_width * grid_height * 4 * 2) / 65536 pages
+    ;; on a besoin de ceil((grid_width * grid_height * 4 * 2) / 65536) pages
     ;; (4 octets par cellule et 2 grilles en mémoire, une page fait 65536 octets)
     (local.set $needed_pages
       (i32.div_u
-        (i32.mul
-          (i32.mul (global.get $grid_width) (global.get $grid_height))
-          (i32.const 8)
+        (i32.add ;; ceil
+          (i32.mul
+            (i32.mul (global.get $grid_width) (global.get $grid_height))
+            (i32.const 8)
+          )
+          (i32.const 65535)
         )
         (i32.const 65536)
       )
