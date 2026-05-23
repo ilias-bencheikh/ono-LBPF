@@ -39,6 +39,7 @@ jobs:
 
           # Install system and opam-repo dependencies
           opam install . --with-test --with-dev-setup --with-doc --deps-only
+          opam install ocamlformat.0.28.1
 
           # Build and test
           dune build @install

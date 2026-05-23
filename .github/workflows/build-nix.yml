@@ -26,7 +26,7 @@ jobs:
             git checkout ${{ github.ref_name }}
           fi
 
-          nix-shell --run "
+          nix-shell -p ocamlformat_0_28_1 --run "
             ODOC_WARN_ERROR=true
             dune build @fmt &&
             dune build @doc &&
