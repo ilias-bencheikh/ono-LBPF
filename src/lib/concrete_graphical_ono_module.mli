@@ -1,13 +1,13 @@
-(** Tampon (buffer) utilisé pour les traitements internes liés à l'affichage. *)
+(** Buffer utilisé pour les traitements liés à l'affichage. *)
 val frame_buffer : Buffer.t
 
-(** Référence indiquant si la fenêtre graphique est ouverte. *)
+(** Boolean indiquant si la fenêtre graphique est ouverte. *)
 val window_opened : bool ref
 
-(** Réinitialise l'état du tampon de la trame. *)
+(** Réinitialise l'état du buffer *)
 val reset_frame_buffer : unit -> unit
 
-(** Convertit le tampon en une liste de lignes, chaque ligne étant une liste de booléens (représentant des pixels ou cellules). *)
+(** Convertit le buffer en une liste de lignes, chaque ligne étant une liste de booléens (représentant des pixels ou cellules). *)
 val rows_of_frame_buffer : unit -> bool list list
 
 (** Ferme la fenêtre graphique si elle est actuellement ouverte. *)
@@ -25,13 +25,13 @@ val initialize_window : cols:int -> rows:int -> (int, 'a) result
 (** Affiche une cellule individuelle dont l'état ou la position est défini par un entier 32 bits. *)
 val print_cell : Owi.Concrete_i32.t -> (unit, 'a) result
 
-(** Effectue un saut de ligne dans l'affichage courant. *)
+(** Effectue un saut de ligne dans l'affichage. *)
 val newline : unit -> (unit, 'a) result
 
 (** Dessine l'ensemble des lignes de la grille avec une taille de cellule donnée. *)
 val draw_rows : cell_size:int -> bool list list -> unit
 
-(** Dessine une zone de saisie pour interagir avec l'utilisateur (titre, message, valeur par défaut). *)
+(** Dessine une zone de saisie pour interaction avec l'utilisateur (titre, message, valeur par défaut). *)
 val draw_input_box : string -> string -> int -> unit
 
 (** S'assure que la fenêtre est ouverte, sinon provoque son ouverture. *)
@@ -40,7 +40,7 @@ val ensure_window_open : unit -> unit
 (** Lit un entier saisi par l'utilisateur via la fenêtre graphique. *)
 val read_int : unit -> (Owi.Concrete_i32.t, [> `Msg of string ]) result
 
-(** Indique si l'exécution graphique est actuellement en pause. *)
+(** Boolean indiquant si l'exécution graphique est en pause. *)
 val is_paused : bool ref
 
 (** Efface complètement l'écran de la fenêtre graphique. *)
