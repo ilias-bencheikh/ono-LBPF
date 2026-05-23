@@ -2,7 +2,6 @@
 type configuration = { width : int; height : int;
   cells : (int * int) list }
 
-(** Définition d'un backend d'affichage générique permettant de substituer le terminal à la fenêtre graphique. *)
 type 'err display_backend = {
   print_cell : Owi.Concrete_i32.t -> (unit, 'err) result;
   newline : unit -> (unit, 'err) result;
@@ -13,6 +12,7 @@ type 'err display_backend = {
 (** Définition d'un backend d'affichage générique permettant de substituer le
     terminal à la fenêtre graphique. *)
 
+val with_config : bool ref
 (** Boolean indiquant si le programme a été lancé avec une configuration. *)
 val with_config : bool ref
 (** Boolean indiquant si le programme a été lancé avec une configuration. *)

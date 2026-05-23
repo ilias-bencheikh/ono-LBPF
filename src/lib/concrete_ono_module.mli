@@ -1,4 +1,3 @@
-(** Buffer d'affichage pour les sorties terminal. *)
 val display_buffer : Buffer.t
 (** Buffer d'affichage pour les sorties terminal. *)
 
