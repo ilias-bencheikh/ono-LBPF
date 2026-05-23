@@ -33,6 +33,7 @@ Added
 - Ajout des commentaires de documentation (odoc)
 Changed
 - Formattage du code
+- Suppression des fichiers inutiles
 Fixed
 - Correction des options --steps / --last
-- Correction de
+- Correction du bouton pause
