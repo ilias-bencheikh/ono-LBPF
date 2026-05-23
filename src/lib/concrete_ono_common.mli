@@ -1,4 +1,4 @@
-(** Structure définissant la configuration d'une grille ou du plateau (ex: pour le jeu de la vie). *)
+(** Structure définissant la configuration d'une grille . *)
 type configuration = { width : int; height : int;
   cells : (int * int) list }
 
@@ -10,7 +10,7 @@ type 'err display_backend = {
   read_int : unit -> (Owi.Concrete_i32.t, 'err) result;
 }
 
-(** Indique si le programme a été lancé avec une configuration personnalisée. *)
+(** Boolean indiquant si le programme a été lancé avec une configuration. *)
 val with_config : bool ref
 
 (** Nombre maximal d'étapes d'exécution autorisées. *)
@@ -67,7 +67,6 @@ val random_i32 : unit -> (Owi.Concrete_i32.t, 'a) result
 (** Met l'exécution en pause pendant un certain nombre de secondes (flottant 32 bits). *)
 val sleep : Owi.Concrete_f32.t -> (unit, 'a) result
 
-(** Construit un module d'interface externe (Extern.Module) à partir du backend d'affichage choisi. *)
 val module_of_backend :
   Owi.Result.err display_backend ->
   Owi.Concrete_extern_func.extern_func Owi.Extern.Module.t
