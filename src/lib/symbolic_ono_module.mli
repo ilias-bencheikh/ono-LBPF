@@ -1,14 +1,16 @@
-(** Type désignant une fonction externe dans un contexte d'exécution symbolique. *)
 type extern_func = Owi.Symbolic_extern_func.extern_func
+(** Type désignant une fonction externe dans un contexte d'exécution symbolique.
+*)
 
-(** Version symbolique de l'affichage d'un entier 32 bits. *)
 val print_i32 : Owi.Symbolic_i32.t -> unit Owi.Symbolic_choice.t
+(** Version symbolique de l'affichage d'un entier 32 bits. *)
 
-(** Génère ou retourne un entier 32 bits symbolique. *)
 val i32_symbol : unit -> Owi.Symbolic_i32.t Owi.Symbolic_choice.t
+(** Génère ou retourne un entier 32 bits symbolique. *)
 
-(** Version symbolique de la lecture d'un entier depuis l'utilisateur. *)
 val read_int : unit -> Owi.Symbolic_i32.t Owi.Symbolic_choice.t
+(** Version symbolique de la lecture d'un entier depuis l'utilisateur. *)
 
-(** Module contenant les appels de fonctions externes pour l'exécution symbolique. *)
 val m : extern_func Owi.Extern.Module.t
+(** Module contenant les appels de fonctions externes pour l'exécution
+    symbolique. *)
