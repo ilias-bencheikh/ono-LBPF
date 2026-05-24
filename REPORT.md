@@ -57,7 +57,9 @@
 
 - Les racines sont bornées à ```[-100 ; 100]``` dans ```polynom2.wat``` pour éviter de renvoyer des racines énormes (dues aux multiplications de ```x``` qui peuvent dépasser les bornes entières).
 
-- Calcul du discriminant pour les polynômes de degré 3 pour déterminer le nombre de racines potentielles pour le polynôme en question.
+- Calcul du discriminant pour les polynômes de degré 3 pour déterminer le nombre de racines potentielles pour le polynôme en question. Voir [Wikipedia](https://fr.wikipedia.org/wiki/Équation_cubique#Discriminant) pour l'explication.
+
+- P-S : On a omis la division par a**4 dans la formule du discriminant, on sait que 'a' sera jamais nul et qu'il est toujours positif donc on en a pas besoin pour juste déterminer le signe de delta. 
 
 - Disjonctions de cas pour renvoyer exactement les bonnes racines, sans doublons.
 
