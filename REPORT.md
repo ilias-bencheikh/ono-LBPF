@@ -41,9 +41,9 @@
 
 ### Interface textuelle
 
-- Il faut que ```steps n > last m```, sinon que l’option ```--steps``` est utilisé.
+- Il faut que ```steps n >= last m```, sinon renvoie une erreur.
 
-- L'option ```--last n``` n'affiche rien.
+- L'option ```--last n``` tout seul est interdit.
 
 ### Interface graphique
 
@@ -51,9 +51,15 @@
 
 - Avancer d'une seule génération avec la ```flèche droite```.
 
+- Calcul dynamique de la mémoire à allouer en fonction de la taille de la grille.
+
 ### Préliminaire (symbolique)
 
 - Les racines sont bornées à ```[-100 ; 100]``` dans ```polynom2.wat``` pour éviter de renvoyer des racines énormes (dues aux multiplications de ```x``` qui peuvent dépasser les bornes entières).
+
+- Calcul du discriminant pour les polynômes de degré 3 pour déterminer le nombre de racines potentielles pour le polynôme en question.
+
+- Disjonctions de cas pour renvoyer exactement les bonnes racines, sans doublons.
 
 # Difficultés rencontrées
 
