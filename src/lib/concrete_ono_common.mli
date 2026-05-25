@@ -29,6 +29,9 @@ val set_max_steps : int option -> unit
 val set_display_last : int option -> unit
 (** Modifie la limite d'affichage des dernières étapes. *)
 
+val set_configuration : configuration -> unit
+(** Charge directement une configuration en mémoire. *)
+
 val read_config : Fpath.t -> (unit, [> `Msg of string ]) result
 (** Charge la configuration à partir d'un fichier spécifié. *)
 

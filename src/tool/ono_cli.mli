@@ -46,6 +46,7 @@ val symbolic_y : int Cmdliner.Term.t
 val symbolic_x_prime : int Cmdliner.Term.t
 val symbolic_y_prime : int Cmdliner.Term.t
 val symbolic_n : int Cmdliner.Term.t
+val symbolic_export_config : bool Cmdliner.Term.t
 val seed : int option Cmdliner.Term.t
 val steps : int option Cmdliner.Term.t
 val last : int option Cmdliner.Term.t

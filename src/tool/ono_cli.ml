@@ -121,6 +121,13 @@ let symbolic_n =
   let doc = "N parameter for symbolic Game of Life constraints that need it." in
   Arg.(value & opt int 0 (info [ "n" ] ~doc ~docv:"N"))
 
+let symbolic_export_config =
+  let doc =
+    "Export the first symbolic Game of Life model to test/config/out.json and \
+     test/config/out.life."
+  in
+  Arg.(value & flag (info [ "export-config" ] ~doc))
+
 let seed =
   let doc =
     "Sets the seed for the random number generator. If omitted, a \
