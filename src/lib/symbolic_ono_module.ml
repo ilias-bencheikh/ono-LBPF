@@ -17,6 +17,22 @@ let read_int () : Kdo.Symbolic.I32.t Kdo.Symbolic.Choice.t =
   with _ ->
     Kdo.Symbolic.Choice.trap (`Msg "Invalid input: expected an integer")
 
+let grid_width = ref 3
+let grid_height = ref 3
+let num_constraint = ref 0
+let set_grid_width value = grid_width := value
+let set_grid_height value = grid_height := value
+let set_num_constraint value = num_constraint := value
+
+let get_grid_width () : Kdo.Symbolic.I32.t Kdo.Symbolic.Choice.t =
+  Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int !grid_width)
+
+let get_grid_height () : Kdo.Symbolic.I32.t Kdo.Symbolic.Choice.t =
+  Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int !grid_height)
+
+let get_num_constraint () : Kdo.Symbolic.I32.t Kdo.Symbolic.Choice.t =
+  Kdo.Symbolic.Choice.return (Kdo.Symbolic.I32.of_int !num_constraint)
+
 let m =
   let open Kdo.Symbolic.Extern_func in
   let open Kdo.Symbolic.Extern_func.Syntax in
@@ -25,6 +41,9 @@ let m =
       ("print_i32", Extern_func (i32 ^->. unit, print_i32));
       ("i32_symbol", Extern_func (unit ^->. i32, i32_symbol));
       ("read_int", Extern_func (unit ^->. i32, read_int));
+      ("get_grid_width", Extern_func (unit ^->. i32, get_grid_width));
+      ("get_grid_height", Extern_func (unit ^->. i32, get_grid_height));
+      ("get_num_constraint", Extern_func (unit ^->. i32, get_num_constraint));
     ]
   in
   {

@@ -81,6 +81,18 @@ let config_file =
     & opt (some existing_file_conv) None
         (info [ "c"; "config" ] ~doc ~docv:"CONFIG FILE"))
 
+let symbolic_grid_width =
+  let doc = "Grid width to use for symbolic Game of Life executions." in
+  Arg.(value & opt int 3 (info [ "grid-width" ] ~doc ~docv:"WIDTH"))
+
+let symbolic_grid_height =
+  let doc = "Grid height to use for symbolic Game of Life executions." in
+  Arg.(value & opt int 3 (info [ "grid-height" ] ~doc ~docv:"HEIGHT"))
+
+let symbolic_num_constraint =
+  let doc = "Constraint number to use for symbolic Game of Life executions." in
+  Arg.(value & opt int 0 (info [ "constraint" ] ~doc ~docv:"N"))
+
 let seed =
   let doc =
     "Sets the seed for the random number generator. If omitted, a \

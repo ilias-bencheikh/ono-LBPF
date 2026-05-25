@@ -2,6 +2,9 @@
 
     (func $read_int (import "ono" "read_int") (result i32))
     (func $i32_symbol (import "ono" "i32_symbol") (result i32))
+    (func $get_grid_width (import "ono" "get_grid_width") (result i32))
+    (func $get_grid_height (import "ono" "get_grid_height") (result i32))
+    (func $get_num_constraint (import "ono" "get_num_constraint") (result i32))
 
     ;;Nombre des contraintes -1
     (global $nb_constraints i32 (i32.const 16))
@@ -52,8 +55,8 @@
 
     (func $read_dimensions
         ;; Lit les dimensions du jeu depuis l'entrée utilisateur
-        (global.set $grid_width (call $read_int))
-        (global.set $grid_height (call $read_int))
+        (global.set $grid_width (call $get_grid_width))
+        (global.set $grid_height (call $get_grid_height))
     )
 
     ;; fonctions de logique du jeu
@@ -771,7 +774,7 @@
 
         (call $read_dimensions)
         ;;Le num de la contrainte
-        (local.set $num_constraint (call $read_int))
+        (local.set $num_constraint (call $get_num_constraint))
         (if (i32.gt_s (local.get $num_constraint) (global.get $nb_constraints ))
           (then return)
         )
