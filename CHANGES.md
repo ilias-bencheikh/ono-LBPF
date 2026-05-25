@@ -1,5 +1,10 @@
 # unreleased
 
+# [v1.1.0] - [2025-05-25]
+
+### Added
+- paramètres x,y,x_prime,y_prime et n en options de lancement au lieu des read_int dans le wasm
+
 # [v1.0.2] - [2025-05-24]
 
 ### Changed

@@ -118,15 +118,15 @@ dune runtest -- ono {concrete || symbolic} {folder.t} [--OPTION]
 
 **Partie symbolique :**
 
-7 entiers sont demandés :
-- ```a``` : longueur grille
-- ```b``` : largeur grille
-- ```c``` : numéro de contrainte
-- ```x``` : position x
-- ```y``` : position y
-- ```x'``` : position x'
-- ```y'``` : position y'
-- ```n``` : borne n
+Voici les options : 
+- ```--grid-width n``` : longueur grille = n (par défaut 3)
+- ```--grid-height n``` : largeur grille = n (par défaut 3)
+- ```--constraint``` : numéro de contrainte = n (par défaut 0)
+- ```-x n``` : position x = n (par défaut 0)
+- ```-y n``` : position y = n (par défaut 0)
+- ```--x-prime n``` : position x' = n (par défaut 0)
+- ```--y-prime n``` : position y' = n (par défaut 0)
+- ```-n x``` : borne n = x (par défaut 0)
 
 ```--no-stop-at-failure``` : ne s’arrête pas après une branche unreachable
 
