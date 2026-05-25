@@ -8,4 +8,6 @@ end
 val run :
   source_file:Fpath.t ->
   no_stop_at_failure:bool ->
+  model_format:Kdo.Symbolic.Model.output_format ->
+  model_out_file:Fpath.t option ->
   (unit, Owi.Result.err) result

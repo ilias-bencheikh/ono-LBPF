@@ -4,16 +4,45 @@ Test the output of the man page:
          ono-symbolic
   
   SYNOPSIS
-         ono symbolic [--no-stop-at-failure] [OPTION]… FILE
+         ono symbolic [OPTION]… FILE
   
   ARGUMENTS
          FILE (required)
              Source file to analyze.
   
   OPTIONS
+         --constraint=N (absent=0)
+             Constraint number to use for symbolic Game of Life executions.
+  
+         --export-config
+             Export the first symbolic Game of Life model to
+             test/config/out.json and test/config/out.life.
+  
+         --grid-height=HEIGHT (absent=3)
+             Grid height to use for symbolic Game of Life executions.
+  
+         --grid-width=WIDTH (absent=3)
+             Grid width to use for symbolic Game of Life executions.
+  
+         -n N (absent=0)
+             N parameter for symbolic Game of Life constraints that need it.
+  
          --no-stop-at-failure
              Continue symbolic exploration after a failure instead of stopping
              at the first one.
+  
+         -x X (absent=0)
+             X coordinate for symbolic Game of Life constraints that need it.
+  
+         --x-prime=X_PRIME (absent=0)
+             Second X coordinate for line constraints in symbolic Game of Life.
+  
+         -y Y (absent=0)
+             Y coordinate for symbolic Game of Life constraints that need it.
+  
+         --y-prime=Y_PRIME (absent=0)
+             Second Y coordinate for column constraints in symbolic Game of
+             Life.
   
   COMMON OPTIONS
          --color=WHEN (absent=auto)

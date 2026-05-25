@@ -5,10 +5,11 @@ Test polynom.wat qui renvoie 1 seule solution:
   Entrer un entier:
   Entrer un entier:
   ono: [ERROR] Trap: unreachable
-  model {
-    symbol symbol_0 i32 4
+  {
+    "labels": [],
+    "model": [ { "symbol": "symbol_0", "type": "i32", "value": "4" } ],
+    "breadcrumbs": [ 1 ]
   }
-  breadcrumbs 1
   ono: [ERROR] owi error: Reached problem!
   [123]
 
@@ -20,12 +21,15 @@ Test polynom2.wat qui renvoie toutes les soltuions
   Entrer un entier:
   Entrer un entier:
   ono: [ERROR] Trap: unreachable
-  model {
-    symbol symbol_0 i32 4
-    symbol symbol_1 i32 2
-    symbol symbol_2 i32 1
+  {
+    "labels": [],
+    "model": [
+      { "symbol": "symbol_0", "type": "i32", "value": "1" },
+      { "symbol": "symbol_1", "type": "i32", "value": "4" },
+      { "symbol": "symbol_2", "type": "i32", "value": "2" }
+    ],
+    "breadcrumbs": [ 1, 1, 0, 0, 0 ]
   }
-  breadcrumbs 0 0 0 1 1
   ono: [ERROR] owi error: Reached problem!
   [123]
 
@@ -36,10 +40,11 @@ Cas 2 : delta nul, mais b^2 == 3ac donc 1 racine triple
   Entrer un entier:
   Entrer un entier:
   ono: [ERROR] Trap: unreachable
-  model {
-    symbol symbol_0 i32 2
+  {
+    "labels": [],
+    "model": [ { "symbol": "symbol_0", "type": "i32", "value": "2" } ],
+    "breadcrumbs": [ 1, 0 ]
   }
-  breadcrumbs 0 1
   ono: [ERROR] owi error: Reached problem!
   [123]
 
@@ -51,11 +56,14 @@ Cas 3 : delta nul, mais b^2 != 3ac donc 1 racine simple et 1 racine double
   Entrer un entier:
   Entrer un entier:
   ono: [ERROR] Trap: unreachable
-  model {
-    symbol symbol_0 i32 1
-    symbol symbol_1 i32 -2
+  {
+    "labels": [],
+    "model": [
+      { "symbol": "symbol_0", "type": "i32", "value": "1" },
+      { "symbol": "symbol_1", "type": "i32", "value": "-2" }
+    ],
+    "breadcrumbs": [ 1, 0, 0 ]
   }
-  breadcrumbs 0 0 1
   ono: [ERROR] owi error: Reached problem!
   [123]
 
@@ -66,10 +74,11 @@ Cas 4 : delta négatif, une seule racine réelle
   Entrer un entier:
   Entrer un entier:
   ono: [ERROR] Trap: unreachable
-  model {
-    symbol symbol_0 i32 1
+  {
+    "labels": [],
+    "model": [ { "symbol": "symbol_0", "type": "i32", "value": "1" } ],
+    "breadcrumbs": [ 1, 0 ]
   }
-  breadcrumbs 0 1
   ono: [ERROR] owi error: Reached problem!
   [123]
 

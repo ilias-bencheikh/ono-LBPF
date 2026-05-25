@@ -1,7 +1,7 @@
 open Syntax
 module Interpret = Kdo.Interpret.Symbolic (Kdo.Interpret.Default_parameters)
 
-let run ~source_file ~no_stop_at_failure =
+let run ~source_file ~no_stop_at_failure ~model_format ~model_out_file =
   (* Parsing. *)
   Logs.info (fun m -> m "Parsing file %a..." Fpath.pp source_file);
   let* wat_module = Kdo.Parse.Wat.Module.from_file source_file in
@@ -40,8 +40,7 @@ let run ~source_file ~no_stop_at_failure =
        ~no_assert_failure_expression_printing:false
        ~deterministic_result_order:false ~fail_mode:Kdo.Symbolic.Parameters.Both
        ~workspace:(Fpath.v ".") ~solver:Smtml.Solver_type.Z3_solver
-       ~model_format:Kdo.Symbolic.Model.Scfg ~model_out_file:None
-       ~with_breadcrumbs:true ~run_time:None
+       ~model_format ~model_out_file ~with_breadcrumbs:true ~run_time:None
   |> function
   | Ok () -> Ok ()
   | Error e -> Fmt.error_msg "owi error: %s" (Owi.Result.err_to_string e)

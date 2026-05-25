@@ -21,6 +21,10 @@ let game_config : configuration option ref = ref None
 let set_max_steps (steps : int option) : unit = max_steps := steps
 let set_display_last (last : int option) : unit = display_last := last
 
+let set_configuration (configuration : configuration) : unit =
+  with_config := true;
+  game_config := Some configuration
+
 let read_config (config : Fpath.t) : (unit, _) Result.t =
   begin
     with_config := true;

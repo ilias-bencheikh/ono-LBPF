@@ -8,6 +8,7 @@
   error
   symbolic_driver
   symbolic_ono_module
+  symbolic_model
   syntax)
  (libraries fpath kdo logs raylib)
  (instrumentation

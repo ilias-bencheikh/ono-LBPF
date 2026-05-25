@@ -5,3 +5,5 @@ _coverage
 _opam
 *.sh
 .vscode
+out.json
+out.life

@@ -81,6 +81,53 @@ let config_file =
     & opt (some existing_file_conv) None
         (info [ "c"; "config" ] ~doc ~docv:"CONFIG FILE"))
 
+let symbolic_grid_width =
+  let doc = "Grid width to use for symbolic Game of Life executions." in
+  Arg.(value & opt int 3 (info [ "grid-width" ] ~doc ~docv:"WIDTH"))
+
+let symbolic_grid_height =
+  let doc = "Grid height to use for symbolic Game of Life executions." in
+  Arg.(value & opt int 3 (info [ "grid-height" ] ~doc ~docv:"HEIGHT"))
+
+let symbolic_num_constraint =
+  let doc = "Constraint number to use for symbolic Game of Life executions." in
+  Arg.(value & opt int 0 (info [ "constraint" ] ~doc ~docv:"N"))
+
+let symbolic_x =
+  let doc =
+    "X coordinate for symbolic Game of Life constraints that need it."
+  in
+  Arg.(value & opt int 0 (info [ "x" ] ~doc ~docv:"X"))
+
+let symbolic_y =
+  let doc =
+    "Y coordinate for symbolic Game of Life constraints that need it."
+  in
+  Arg.(value & opt int 0 (info [ "y" ] ~doc ~docv:"Y"))
+
+let symbolic_x_prime =
+  let doc =
+    "Second X coordinate for line constraints in symbolic Game of Life."
+  in
+  Arg.(value & opt int 0 (info [ "x-prime" ] ~doc ~docv:"X_PRIME"))
+
+let symbolic_y_prime =
+  let doc =
+    "Second Y coordinate for column constraints in symbolic Game of Life."
+  in
+  Arg.(value & opt int 0 (info [ "y-prime" ] ~doc ~docv:"Y_PRIME"))
+
+let symbolic_n =
+  let doc = "N parameter for symbolic Game of Life constraints that need it." in
+  Arg.(value & opt int 0 (info [ "n" ] ~doc ~docv:"N"))
+
+let symbolic_export_config =
+  let doc =
+    "Export the first symbolic Game of Life model to test/config/out.json and \
+     test/config/out.life."
+  in
+  Arg.(value & flag (info [ "export-config" ] ~doc))
+
 let seed =
   let doc =
     "Sets the seed for the random number generator. If omitted, a \
