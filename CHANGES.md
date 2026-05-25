@@ -4,6 +4,13 @@
 
 ### Added
 - paramètres x,y,x_prime,y_prime et n en options de lancement au lieu des read_int dans le wasm
+- option ```--export-config``` pour transformer la sortie de l'exécution symbolique en fichier ```.life``` testable
+
+### Changed
+- changement du type d'output de l'exécution symbolique : SCFG -> json
+
+### Fixed
+- update des anciens cramtests de l'exécution symbolique
 
 # [v1.0.2] - [2025-05-24]
 

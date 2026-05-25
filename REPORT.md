@@ -118,7 +118,7 @@ dune runtest -- ono {concrete || symbolic} {folder.t} [--OPTION]
 
 **Partie symbolique :**
 
-Voici les options : 
+Les options liées aux contraintes (pas obligé de tout spécifier) : 
 - ```--grid-width n``` : longueur grille = n (par défaut 3)
 - ```--grid-height n``` : largeur grille = n (par défaut 3)
 - ```--constraint``` : numéro de contrainte = n (par défaut 0)
@@ -128,7 +128,8 @@ Voici les options :
 - ```--y-prime n``` : position y' = n (par défaut 0)
 - ```-n x``` : borne n = x (par défaut 0)
 
-```--no-stop-at-failure``` : ne s’arrête pas après une branche unreachable
+Les options liées à l'exécution :
+- ```--no-stop-at-failure``` : ne s’arrête pas après une branche unreachable
+- ```--export-config``` : transforme le résultat symbolique et crée un fichier ```out.json``` et ```out.life``` dans ```test/config/``` testable via l'interface graphique ou textuelle.
 
-
-
+P-S : il vaut mieux tester la config exportée sur l'interface textuelle plutôt que graphique pour question de visibilité, avec option ```--steps 2``` par exemple.
