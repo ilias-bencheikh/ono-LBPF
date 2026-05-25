@@ -43,6 +43,9 @@ let term =
           else output_json
         else output_json
       in
+      if not (Sys.file_exists (Fpath.to_string model_file)) then
+        Ok ()
+      else
       match
         Ono.Symbolic_model.configuration_of_json_file ~width:grid_width
           ~height:grid_height model_file
