@@ -41,6 +41,11 @@ val config_file : Fpath.t option Cmdliner.Term.t
 val symbolic_grid_width : int Cmdliner.Term.t
 val symbolic_grid_height : int Cmdliner.Term.t
 val symbolic_num_constraint : int Cmdliner.Term.t
+val symbolic_x : int Cmdliner.Term.t
+val symbolic_y : int Cmdliner.Term.t
+val symbolic_x_prime : int Cmdliner.Term.t
+val symbolic_y_prime : int Cmdliner.Term.t
+val symbolic_n : int Cmdliner.Term.t
 val seed : int option Cmdliner.Term.t
 val steps : int option Cmdliner.Term.t
 val last : int option Cmdliner.Term.t

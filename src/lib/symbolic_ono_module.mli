@@ -20,6 +20,21 @@ val set_grid_height : int -> unit
 val set_num_constraint : int -> unit
 (** Fixe le numéro de contrainte utilisé par les imports symboliques. *)
 
+val set_x : int -> unit
+(** Fixe la position x. *)
+
+val set_y : int -> unit
+(** Fixe la position y. *)
+
+val set_x_prime : int -> unit
+(** Fixe la position x'. *)
+
+val set_y_prime : int -> unit
+(** Fixe la position y'. *)
+
+val set_n : int -> unit
+(** Fixe la valeur n. *)
+
 val m : extern_func Owi.Extern.Module.t
 (** Module contenant les appels de fonctions externes pour l'exécution
     symbolique. *)
