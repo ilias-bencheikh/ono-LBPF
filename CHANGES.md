@@ -1,9 +1,12 @@
 # unreleased
 
+- fix CI/CD
+
 # [v1.1.0] - [2025-05-25]
 
 ### Added
-- paramètres x,y,x_prime,y_prime et n en options de lancement au lieu des read_int dans le wasm
+- taille de grille et numéro de contrainte en option de commande
+- paramètres x,y,x_prime,y_prime et n en options de commande au lieu des read_int dans le wasm
 - option ```--export-config``` pour transformer la sortie de l'exécution symbolique en fichier ```.life``` testable
 
 ### Changed
