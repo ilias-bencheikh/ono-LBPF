@@ -34,7 +34,7 @@ val exits : Cmdliner.Cmd.Exit.info list
 val sdocs : string
 val version : string
 val log_level : Logs.level option Cmdliner.Term.t
-val existing_file_conv : Fpath.t Cmdliner.Arg.Conv.t
+val existing_file_conv : Fpath.t Cmdliner.Arg.conv
 val setup_log : unit Cmdliner.Term.t
 val source_file : Fpath.t Cmdliner.Term.t
 val config_file : Fpath.t option Cmdliner.Term.t
