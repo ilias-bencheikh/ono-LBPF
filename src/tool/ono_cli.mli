@@ -38,7 +38,7 @@ val existing_file_conv : Fpath.t Cmdliner.Arg.conv
 val setup_log : unit Cmdliner.Term.t
 val source_file : Fpath.t Cmdliner.Term.t
 val config_file : Fpath.t option Cmdliner.Term.t
-val symbolic_grid_width : int Cmdliner.Term.tc
+val symbolic_grid_width : int Cmdliner.Term.t
 val symbolic_grid_height : int Cmdliner.Term.t
 val symbolic_num_constraint : int Cmdliner.Term.t
 val symbolic_x : int Cmdliner.Term.t
